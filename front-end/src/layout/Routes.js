@@ -1,7 +1,7 @@
-import React from "react";
-
-import { Redirect, Route, Switch } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
+import Reservations from "../reservations/Reservations";
 import NotFound from "./NotFound";
 import { today } from "../utils/date-time";
 
@@ -12,17 +12,28 @@ import { today } from "../utils/date-time";
  *
  * @returns {JSX.Element}
  */
+
 function Routes() {
+  const [selectedDate, setSelectedDate] = useState(today());
+  const query = new URLSearchParams(useLocation().search);
+  const specificDate = query.get("date");
+
+  useEffect(() => {
+    if (specificDate) {
+      setSelectedDate(specificDate);
+    }
+  }, [specificDate]);
+
   return (
     <Switch>
       <Route exact={true} path="/">
         <Redirect to={"/dashboard"} />
       </Route>
-      <Route exact={true} path="/reservations">
-        <Redirect to={"/dashboard"} />
+      <Route path="/reservations">
+        <Reservations setSelectedDate={setSelectedDate} />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={today()} />
+        <Dashboard date={selectedDate} setSelectedDate={setSelectedDate} />
       </Route>
       <Route>
         <NotFound />
