@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-// useEffect,
 import { useHistory } from "react-router";
 import { today } from "../utils/date-time";
 import { createReservation } from "../utils/api";
-// import ErrorAlert from "../layout/ErrorAlert";
 
 function Reservations({ setSelectedDate }) {
   const history = useHistory();
@@ -18,7 +16,6 @@ function Reservations({ setSelectedDate }) {
   };
 
   const [reservation, setReservation] = useState({ ...defaultReservation });
-  // const [reservationsError, setReservationsError] = useState(null);
 
   const changeHandler = ({ target }) => {
     setReservation({
@@ -27,18 +24,10 @@ function Reservations({ setSelectedDate }) {
     });
   };
 
-  // useEffect(() => {
-  //   saveReservation()
-  // }, [reservationsError]);
-
   function saveReservation() {
     const abortController = new AbortController();
-    // setReservationsError(null);
+    reservation.people = Number(reservation.people);
     createReservation(reservation, abortController.signal);
-    // .catch(
-    //   setReservationsError
-    // );
-    // console.log(reservationsError);
     return () => abortController.abort();
   }
 
@@ -47,10 +36,7 @@ function Reservations({ setSelectedDate }) {
     setReservation({ ...defaultReservation });
     setSelectedDate(reservation.reservation_date);
     saveReservation();
-    // console.log(reservationsError);
-    // if (reservationsError === null) {
     history.push(`/dashboard?date=${reservation.reservation_date}`);
-    // }
   };
   const [year, month, day] = today().split("-");
   const maxDate = `${Number(year) + 50}-${month}-${day}`;
@@ -146,7 +132,6 @@ function Reservations({ setSelectedDate }) {
         <button type="submit">Submit</button>
         <button onClick={() => history.goBack()}>Cancel</button>
       </form>
-      {/* <ErrorAlert error={reservationsError} /> */}
     </main>
   );
 }

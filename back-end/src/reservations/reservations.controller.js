@@ -3,7 +3,6 @@
  */
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
-const { min } = require("../db/connection");
 
 function allFields(req, res, next) {
   if (!req.body.data) {
@@ -33,7 +32,11 @@ function allFields(req, res, next) {
     "people",
   ];
 
-  const [hour, minute] = reservation_time.split(":");
+  let [hour, minute] = "";
+
+  if (reservation_time) {
+    [hour, minute] = reservation_time.split(":");
+  }
 
   switch (true) {
     case people === 0:
@@ -111,9 +114,32 @@ function allFields(req, res, next) {
   }
 }
 
+async function correctId(req, res, next) {
+  const id = await service.read(req.params.reservation_id);
+  if (id) {
+    return next();
+  }
+  next({
+    status: 404,
+    message: `Reservation $${req.params.reservation_id} cannot be found.`,
+  });
+}
+
 async function list(req, res) {
-  const data = await service.list(req.query.date);
-  res.json({ data });
+  if (req.query.date) {
+    const data = await service.list(req.query.date);
+    res.json({ data });
+  } else if (req.query.mobile_phone) {
+    const data = await service.search(req.query.mobile_phone);
+    res.json({ data });
+  }
+}
+
+async function read(req, res) {
+  const data = await service.read(req.params.reservation_id);
+  if (data) {
+    res.status(200).json({ data });
+  }
 }
 
 async function create(req, res) {
@@ -123,6 +149,7 @@ async function create(req, res) {
 }
 
 module.exports = {
+  read: [asyncErrorBoundary(correctId), asyncErrorBoundary(read)],
   list: [asyncErrorBoundary(list)],
   create: [allFields, asyncErrorBoundary(create)],
 };
