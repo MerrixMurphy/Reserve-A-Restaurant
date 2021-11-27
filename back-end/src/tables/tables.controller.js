@@ -1,7 +1,6 @@
 const service = require("./tables.service");
 const reservationService = require("../reservations/reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
-const { as } = require("../db/connection");
 
 function allFields(req, res, next) {
   if (!req.body.data) {
@@ -70,7 +69,6 @@ async function beforeUpdate(req, res, next) {
     req.body.data.reservation_id
   );
   res.locals.reservationData = reservationData;
-
   const tableData = await service.read(Number(req.params.table_id));
   res.locals.tableData = tableData;
 

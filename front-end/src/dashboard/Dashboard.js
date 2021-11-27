@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables, removeTable } from "../utils/api";
+import {
+  listReservations,
+  listTables,
+  removeTable,
+  updateRes,
+} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { previous, next, today } from "../utils/date-time";
 import { useHistory } from "react-router";
@@ -10,17 +15,24 @@ import { useHistory } from "react-router";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date, setSelectedDate, whichList, setWhichList }) {
+function Dashboard({
+  date,
+  setSelectedDate,
+  whichList,
+  setWhichList,
+  tables,
+  setTables,
+  reservations,
+  setReservations,
+}) {
   const history = useHistory();
-  const [reservations, setReservations] = useState([]);
-  const [tables, setTables] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
 
   //load list of reservations on date change
-  useEffect(loadDashboard, [date]);
+  useEffect(loadDashboard, [date, setReservations]);
 
   // load list of tables on load.
-  useEffect(loadTable, []);
+  useEffect(loadTable, [setTables]);
 
   // load reservations
   function loadDashboard() {
@@ -47,8 +59,21 @@ function Dashboard({ date, setSelectedDate, whichList, setWhichList }) {
       )
     ) {
       const abortController = new AbortController();
-      console.log(event.target.id);
       removeTable(event.target.id, abortController.signal)
+        .then(() => listTables(abortController.signal))
+        .then(setTables);
+      return () => abortController.abort();
+    }
+  };
+
+  const cancelled = (event) => {
+    if (
+      window.confirm(
+        "Do you want to cancel this reservation? This cannot be undone."
+      )
+    ) {
+      const abortController = new AbortController();
+      updateRes(event.target.id, abortController.signal)
         .then(() => listTables(abortController.signal))
         .then(setTables);
       return () => abortController.abort();
@@ -143,25 +168,20 @@ function Dashboard({ date, setSelectedDate, whichList, setWhichList }) {
                       </tr>
                     </tbody>
                   </table>
-                  {Object.keys(tables).length !== 0 ? (
-                    tables.find(
-                      (tab) => tab.reservation_id === res.reservation_id
-                    ) ? null : (
-                      <button
-                        className="w-25"
-                        href={`/reservations/${res.reservation_id}/seat`}
-                        onClick={() =>
-                          history.push(
-                            `/reservations/${res.reservation_id}/seat`
-                          )
-                        }
-                      >
-                        SEAT
-                      </button>
-                    )
-                  ) : (
+                  <button
+                    className="w-25 mr-2"
+                    href={`/reservations/${res.reservation_id}/edit`}
+                    disabled={res.status === "booked" ? false : true}
+                    onClick={() =>
+                      history.push(`/reservations/${res.reservation_id}/edit`)
+                    }
+                  >
+                    Edit
+                  </button>
+                  {res.status !== "booked" ? null : (
                     <button
-                      className="w-25"
+                      className="w-25 ml-2 mr-2"
+                      disabled={res.status === "booked" ? false : true}
                       href={`/reservations/${res.reservation_id}/seat`}
                       onClick={() =>
                         history.push(`/reservations/${res.reservation_id}/seat`)
@@ -170,6 +190,15 @@ function Dashboard({ date, setSelectedDate, whichList, setWhichList }) {
                       SEAT
                     </button>
                   )}
+                  <button
+                    id={res.reservation_id}
+                    className="w-25 ml-2"
+                    disabled={res.status === "booked" ? false : true}
+                    data-reservation-id-cancel={res.reservation_id}
+                    onClick={cancelled}
+                  >
+                    Cancel
+                  </button>
                 </div>
               );
             })

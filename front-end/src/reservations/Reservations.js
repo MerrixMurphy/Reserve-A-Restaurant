@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router";
 import { today } from "../utils/date-time";
-import { createReservation } from "../utils/api";
+import { createReservation, listOne, editRes } from "../utils/api";
 
-function Reservations({ setSelectedDate }) {
+function Reservations({ setSelectedDate, setWhichList }) {
   const history = useHistory();
+  const params = useParams();
 
   const defaultReservation = {
     first_name: "",
@@ -15,7 +16,19 @@ function Reservations({ setSelectedDate }) {
     people: "1",
   };
 
+  useEffect(editReservation, [params]);
+
   const [reservation, setReservation] = useState({ ...defaultReservation });
+
+  function editReservation() {
+    if (params.reservation_id) {
+      const abortController = new AbortController();
+      listOne(params.reservation_id, abortController.signal).then(
+        setReservation
+      );
+      return () => abortController.abort();
+    }
+  }
 
   const changeHandler = ({ target }) => {
     setReservation({
@@ -27,26 +40,48 @@ function Reservations({ setSelectedDate }) {
   function saveReservation() {
     const abortController = new AbortController();
     reservation.people = Number(reservation.people);
-    createReservation(reservation, abortController.signal);
+    if (params.reservation_id) {
+      editRes(reservation, abortController.signal);
+    } else {
+      createReservation(reservation, abortController.signal);
+    }
     return () => abortController.abort();
   }
 
   const submitHandler = (event) => {
     event.preventDefault();
-    setReservation({ ...defaultReservation });
-    setSelectedDate(reservation.reservation_date);
-    saveReservation();
-    history.push(`/dashboard?date=${reservation.reservation_date}`);
+    if (params.reservation_id) {
+      setReservation({ ...defaultReservation });
+      saveReservation();
+      history.push(`/dashboard?date=${reservation.reservation_date}`);
+    } else {
+      setWhichList("reservations");
+      setReservation({ ...defaultReservation });
+      setSelectedDate(reservation.reservation_date);
+      saveReservation();
+      history.goBack();
+    }
   };
   const [year, month, day] = today().split("-");
   const maxDate = `${Number(year) + 50}-${month}-${day}`;
-
+  reservation.reservation_date = reservation.reservation_date.slice(0, 10);
   return (
     <main>
-      <h1>New Reservation</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Create A New Reservation Here!</h4>
-      </div>
+      {!params.reservation_id ? (
+        <div>
+          <h1>New Reservation</h1>
+          <div className="d-md-flex mb-3">
+            <h4 className="mb-0">Create A New Reservation Here!</h4>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <h1>Edit Reservation</h1>
+          <div className="d-md-flex mb-3">
+            <h4 className="mb-0">Edit A Reservation Here!</h4>
+          </div>
+        </div>
+      )}
       <form onSubmit={submitHandler}>
         <div className="col-1">
           <label htmlFor="first_name">

@@ -15,7 +15,14 @@ function Seat() {
 
   useEffect(loadTable, []);
 
-  useEffect(() => setFirstTable(tables[0]), [tables]);
+  useEffect(() => {
+    if (seat.people) {
+      const firstTab = tables.find(
+        (tab) => tab.capacity >= seat.people && tab.reservation_id === null
+      );
+      setFirstTable(firstTab);
+    }
+  }, [tables, seat.people]);
 
   function loadSeat() {
     const abortController = new AbortController();
@@ -51,10 +58,10 @@ function Seat() {
     setCurrentTable(event.target.value);
   };
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
     updateTab();
-    history.push(`/dashboard`);
+    history.push("/dashboard");
   };
 
   return (
@@ -99,32 +106,34 @@ function Seat() {
                   </td>
                   <td className="border">{seat.reservation_time}</td>
                   <td className="border">
-                    <label htmlFor="table_id">
-                      <select
-                        name="table_id"
-                        id="table_id"
-                        onChange={changeHandler}
-                      >
-                        {Object.keys(tables).length !== 0 ? (
-                          tables.map((tab) => {
-                            if (
-                              tab.capacity >= seat.people &&
-                              tab.reservation_id === null
-                            ) {
-                              return (
-                                <option value={tab.table_id}>
-                                  {tab.table_name} - {tab.capacity}
-                                </option>
-                              );
-                            } else {
-                              return null;
-                            }
-                          })
-                        ) : (
-                          <h3>No Tables Listed.</h3>
-                        )}
-                      </select>
-                    </label>
+                    {firstTable ? (
+                      <label htmlFor="table_id">
+                        <select
+                          name="table_id"
+                          id="table_id"
+                          onChange={changeHandler}
+                        >
+                          {Object.keys(tables).length !== 0
+                            ? tables.map((tab) => {
+                                if (
+                                  tab.capacity >= seat.people &&
+                                  tab.reservation_id === null
+                                ) {
+                                  return (
+                                    <option value={tab.table_id}>
+                                      {tab.table_name} - {tab.capacity}
+                                    </option>
+                                  );
+                                } else {
+                                  return null;
+                                }
+                              })
+                            : null}
+                        </select>
+                      </label>
+                    ) : (
+                      "No Tables Listed."
+                    )}
                   </td>
                 </tr>
               </tbody>

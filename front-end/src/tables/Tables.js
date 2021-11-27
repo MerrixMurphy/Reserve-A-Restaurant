@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import { createTable } from "../utils/api";
+import { createTable, listTables } from "../utils/api";
 
-function Tables({ setWhichList }) {
+function Tables({ setWhichList, setTables }) {
   const history = useHistory();
 
   const defaultTable = {
@@ -37,7 +37,10 @@ function Tables({ setWhichList }) {
     saveTable();
     setTable({ ...defaultTable });
     setWhichList("tables");
+    const abortController = new AbortController();
+    listTables(abortController.signal).then(setTables);
     history.push(`/dashboard`);
+    return () => abortController.abort();
   };
 
   return (

@@ -21,6 +21,8 @@ function Routes() {
   const history = useHistory();
   const [selectedDate, setSelectedDate] = useState(today());
   const [whichList, setWhichList] = useState("reservations");
+  const [tables, setTables] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const query = new URLSearchParams(useLocation().search);
   let specificDate = query.get("date");
 
@@ -48,7 +50,10 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route exact={true} path="/reservations/new">
-        <Reservations setSelectedDate={setSelectedDate} />
+        <Reservations
+          setSelectedDate={setSelectedDate}
+          setWhichList={setWhichList}
+        />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
         <Seat />
@@ -57,10 +62,10 @@ function Routes() {
         <Reservations />
       </Route>
       <Route exact={true} path="/tables/new">
-        <Tables setWhichList={setWhichList} />
+        <Tables setWhichList={setWhichList} setTables={setTables} />
       </Route>
       <Route path="/search">
-        <Search />
+        <Search tables={tables} setTables={setTables} />
       </Route>
       <Route path="/dashboard">
         <Dashboard
@@ -68,6 +73,10 @@ function Routes() {
           setSelectedDate={setSelectedDate}
           whichList={whichList}
           setWhichList={setWhichList}
+          tables={tables}
+          setTables={setTables}
+          reservations={reservations}
+          setReservations={setReservations}
         />
       </Route>
       <Route>

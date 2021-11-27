@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { listReservations } from "../utils/api";
+import { useState, useEffect } from "react";
+import { useHistory } from "react-router";
+import { listReservations, listTables, updateRes } from "../utils/api";
 
-function Search() {
+function Search({ tables, setTables }) {
+  const history = useHistory();
   const [phoneSearch, setPhoneSearch] = useState({ mobile_phone: "" });
   const [firstSearch, setFirstSeach] = useState(true);
   const [matchSearch, setMatchSearch] = useState(null);
@@ -12,8 +14,15 @@ function Search() {
 
   function searchReservations() {
     const abortController = new AbortController();
-    console.log(phoneSearch);
     listReservations(phoneSearch, abortController.signal).then(setMatchSearch);
+    return () => abortController.abort();
+  }
+
+  useEffect(loadTable, [setTables]);
+
+  function loadTable() {
+    const abortController = new AbortController();
+    listTables(abortController.signal).then(setTables);
     return () => abortController.abort();
   }
 
@@ -22,10 +31,28 @@ function Search() {
     searchReservations();
   };
 
+  const cancelled = (event) => {
+    if (
+      window.confirm(
+        "Do you want to cancel this reservation? This cannot be undone."
+      )
+    ) {
+      const abortController = new AbortController();
+      updateRes(event.target.id, abortController.signal)
+        .then(() => listTables(abortController.signal))
+        .then(setTables);
+      return () => abortController.abort();
+    }
+  };
+
   const reservationsList = JSON.parse(JSON.stringify(matchSearch));
 
+  if (reservationsList) {
+    reservationsList.forEach((res) => res.mobile_number.split());
+  }
+
   return (
-    <main>
+    <main className="text-center">
       <h1>New Search</h1>
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Search a Reservation Phone Number Here!</h4>
@@ -50,6 +77,7 @@ function Search() {
       {firstSearch ? null : matchSearch ? (
         Object.keys(reservationsList).length !== 0 ? (
           reservationsList.map((res, index) => {
+            res.mobile_number = res.mobile_number.split("-").join("");
             return (
               <div>
                 <table key={index} className="table border mt-3 text-center">
@@ -82,6 +110,52 @@ function Search() {
                     </tr>
                   </tbody>
                 </table>
+                <button
+                  className="w-25 mr-2"
+                  href={`/reservations/${res.reservation_id}/edit`}
+                  disabled={res.status === "booked" ? false : true}
+                  onClick={() =>
+                    history.push(`/reservations/${res.reservation_id}/edit`)
+                  }
+                >
+                  Edit
+                </button>
+                {Object.keys(tables).length !== 0 ? (
+                  tables.find(
+                    (tab) => tab.reservation_id === res.reservation_id
+                  ) ? null : (
+                    <button
+                      className="w-25 ml-2 mr-2"
+                      disabled={res.status === "booked" ? false : true}
+                      href={`/reservations/${res.reservation_id}/seat`}
+                      onClick={() =>
+                        history.push(`/reservations/${res.reservation_id}/seat`)
+                      }
+                    >
+                      SEAT
+                    </button>
+                  )
+                ) : (
+                  <button
+                    className="w-25 ml-2 mr-2"
+                    disabled={res.status === "booked" ? false : true}
+                    href={`/reservations/${res.reservation_id}/seat`}
+                    onClick={() =>
+                      history.push(`/reservations/${res.reservation_id}/seat`)
+                    }
+                  >
+                    SEAT
+                  </button>
+                )}
+                <button
+                  id={res.reservation_id}
+                  className="w-25 ml-2"
+                  disabled={res.status === "booked" ? false : true}
+                  data-reservation-id-cancel={res.reservation_id}
+                  onClick={cancelled}
+                >
+                  Cancel
+                </button>
               </div>
             );
           })
