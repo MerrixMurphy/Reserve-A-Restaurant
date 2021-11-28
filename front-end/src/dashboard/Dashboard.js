@@ -75,7 +75,8 @@ function Dashboard({
       const abortController = new AbortController();
       updateRes(event.target.id, abortController.signal)
         .then(() => listTables(abortController.signal))
-        .then(setTables);
+        .then(setTables)
+        .then(loadDashboard);
       return () => abortController.abort();
     }
   };
@@ -131,8 +132,8 @@ function Dashboard({
           {Object.keys(reservations).length !== 0 ? (
             reservations.map((res, index) => {
               return (
-                <div>
-                  <table key={index} className="table border mt-3 text-center">
+                <div key={index}>
+                  <table className="table border mt-3 text-center">
                     <thead>
                       <tr>
                         <th className="border">Reservation ID</th>
@@ -214,8 +215,8 @@ function Dashboard({
           {Object.keys(tables).length !== 0 ? (
             tables.map((tab, index) => {
               return (
-                <div>
-                  <table key={index} className="table border mt-3 text-center">
+                <div key={index}>
+                  <table className="table border mt-3 text-center">
                     <thead>
                       <tr>
                         <th className="border">Table Name</th>

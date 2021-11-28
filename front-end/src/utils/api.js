@@ -98,7 +98,6 @@ export async function createTable(newTab, signal) {
 
 export async function updateTable(table_id, reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
-
   return await fetchJson(
     url,
     {

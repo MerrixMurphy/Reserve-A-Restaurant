@@ -33,6 +33,9 @@ function allFields(req, res, next) {
       "people",
     ];
 
+    const date = new Date();
+    let stringDate = `${date.getFullYear}-${date.getMonth}-${date.getDay}`;
+
     let [hour, minute] = "";
 
     if (reservation_time) {
@@ -83,7 +86,7 @@ function allFields(req, res, next) {
           status: 400,
           message: `Error: No valid ${error} in the request.`,
         });
-      case Date.parse(reservation_date) < Date.parse(new Date()):
+      case Date.parse(reservation_date) < Date.parse(stringDate):
         next({
           status: 400,
           message: `Error: Please put a future reservation_date in the request.`,
@@ -97,10 +100,10 @@ function allFields(req, res, next) {
         (Number(hour) === 10 && Number(minute) <= 30) ||
         Number(hour) > 21 ||
         (Number(hour) === 21 && Number(minute) >= 30) ||
-        (new Date() === reservation_date &&
-          (Number(hour) < new Date().getHours() ||
-            (Number(hour) === new Date().getHours() &&
-              Number(minute) < new Date().getMinutes()))):
+        (date === reservation_date &&
+          (Number(hour) < date.getHours() ||
+            (Number(hour) === date.getHours() &&
+              Number(minute) < date.getMinutes()))):
         next({
           status: 400,
           message: `Error: We are closed on this reservation_date.`,

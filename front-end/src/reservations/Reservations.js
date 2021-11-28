@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { today } from "../utils/date-time";
-import { createReservation, listOne, editRes } from "../utils/api";
+import {
+  createReservation,
+  listOne,
+  editRes,
+  listReservations,
+} from "../utils/api";
 
-function Reservations({ setSelectedDate, setWhichList }) {
+function Reservations({
+  setWhichList,
+  whichList,
+  setReservations,
+  selectedDate,
+}) {
   const history = useHistory();
   const params = useParams();
 
@@ -19,6 +29,14 @@ function Reservations({ setSelectedDate, setWhichList }) {
   useEffect(editReservation, [params]);
 
   const [reservation, setReservation] = useState({ ...defaultReservation });
+
+  function listRes() {
+    const abortController = new AbortController();
+    listReservations(selectedDate, abortController.signal).then(
+      setReservations
+    );
+    return () => abortController.abort();
+  }
 
   function editReservation() {
     if (params.reservation_id) {
@@ -42,6 +60,7 @@ function Reservations({ setSelectedDate, setWhichList }) {
     reservation.people = Number(reservation.people);
     if (params.reservation_id) {
       editRes(reservation, abortController.signal);
+      listRes();
     } else {
       createReservation(reservation, abortController.signal);
     }
@@ -50,18 +69,18 @@ function Reservations({ setSelectedDate, setWhichList }) {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (params.reservation_id) {
+    if (!params.reservation_id) {
       setReservation({ ...defaultReservation });
       saveReservation();
       history.push(`/dashboard?date=${reservation.reservation_date}`);
     } else {
       setWhichList("reservations");
       setReservation({ ...defaultReservation });
-      setSelectedDate(reservation.reservation_date);
       saveReservation();
       history.goBack();
     }
   };
+
   const [year, month, day] = today().split("-");
   const maxDate = `${Number(year) + 50}-${month}-${day}`;
   reservation.reservation_date = reservation.reservation_date.slice(0, 10);
@@ -165,7 +184,9 @@ function Reservations({ setSelectedDate, setWhichList }) {
           </label>
         </div>
         <button type="submit">Submit</button>
-        <button onClick={() => history.goBack()}>Cancel</button>
+        <button type="button" onClick={() => history.goBack()}>
+          Cancel
+        </button>
       </form>
     </main>
   );

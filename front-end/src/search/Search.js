@@ -40,7 +40,8 @@ function Search({ tables, setTables }) {
       const abortController = new AbortController();
       updateRes(event.target.id, abortController.signal)
         .then(() => listTables(abortController.signal))
-        .then(setTables);
+        .then(setTables)
+        .then(searchReservations);
       return () => abortController.abort();
     }
   };
@@ -79,8 +80,8 @@ function Search({ tables, setTables }) {
           reservationsList.map((res, index) => {
             res.mobile_number = res.mobile_number.split("-").join("");
             return (
-              <div>
-                <table key={index} className="table border mt-3 text-center">
+              <div key={index}>
+                <table className="table border mt-3 text-center">
                   <thead>
                     <tr>
                       <th className="border">Reservation ID</th>
@@ -89,6 +90,7 @@ function Search({ tables, setTables }) {
                       <th className="border">Reservation Phone Number</th>
                       <th className="border">Reservation Date</th>
                       <th className="border">Reservation Time</th>
+                      <th className="border">Reservation Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -107,6 +109,7 @@ function Search({ tables, setTables }) {
                       </td>
                       <td className="border">{res.reservation_date}</td>
                       <td className="border">{res.reservation_time}</td>
+                      <td className="border">{res.status}</td>
                     </tr>
                   </tbody>
                 </table>

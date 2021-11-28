@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
-import { updateTable, listOne, listTables } from "../utils/api";
+import {
+  updateTable,
+  listOne,
+  listTables,
+  listReservations,
+} from "../utils/api";
 
-function Seat() {
+function Seat({ setReservations, selectedDate }) {
   const history = useHistory();
   const params = useParams();
 
@@ -36,14 +41,18 @@ function Seat() {
     return () => abortController.abort();
   }
 
+  function listRes() {
+    const abortController = new AbortController();
+    listReservations(selectedDate, abortController.signal).then(
+      setReservations
+    );
+    return () => abortController.abort();
+  }
+
   function updateTab() {
     const abortController = new AbortController();
     if (currentTable) {
-      updateTable(
-        currentTable.table_id,
-        seat.reservation_id,
-        abortController.signal
-      );
+      updateTable(currentTable, seat.reservation_id, abortController.signal);
     } else {
       updateTable(
         firstTable.table_id,
@@ -61,6 +70,7 @@ function Seat() {
   const submitHandler = async (event) => {
     event.preventDefault();
     updateTab();
+    listRes();
     history.push("/dashboard");
   };
 
@@ -114,13 +124,13 @@ function Seat() {
                           onChange={changeHandler}
                         >
                           {Object.keys(tables).length !== 0
-                            ? tables.map((tab) => {
+                            ? tables.map((tab, index) => {
                                 if (
                                   tab.capacity >= seat.people &&
                                   tab.reservation_id === null
                                 ) {
                                   return (
-                                    <option value={tab.table_id}>
+                                    <option key={index} value={tab.table_id}>
                                       {tab.table_name} - {tab.capacity}
                                     </option>
                                   );
@@ -143,7 +153,9 @@ function Seat() {
           <h3>No Seating.</h3>
         )}
         <button type="submit">Submit</button>
-        <button onClick={() => history.goBack()}>Cancel</button>
+        <button type="button" onClick={() => history.goBack()}>
+          Cancel
+        </button>
       </form>
     </main>
   );
