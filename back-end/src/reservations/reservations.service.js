@@ -4,6 +4,7 @@ function list(date) {
   return knex("reservations")
     .select("*")
     .where({ reservation_date: date })
+    .whereNot({ status: "finished" })
     .orderBy("reservation_time");
 }
 
@@ -12,7 +13,10 @@ function read(id) {
 }
 
 function create(reservation) {
-  return knex("reservations").insert(reservation);
+  return knex("reservations")
+    .insert(reservation)
+    .returning("*")
+    .then((res) => res[0]);
 }
 
 function search(mobile_number) {
@@ -21,8 +25,7 @@ function search(mobile_number) {
       "translate(mobile_number, '() -', '') like ?",
       `%${mobile_number.replace(/\D/g, "")}%`
     )
-    .orderBy("reservation_date")
-    .orderBy("reservation_time");
+    .orderBy(["reservation_date", "reservation_time"]);
 }
 
 function update(id, status) {

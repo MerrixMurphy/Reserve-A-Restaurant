@@ -26,7 +26,7 @@ function Dashboard({
   setReservations,
 }) {
   const history = useHistory();
-  const [reservationsError, setReservationsError] = useState(null);
+  const [currentError, setCurrentError] = useState(null);
 
   //load list of reservations on date change
   useEffect(loadDashboard, [date, setReservations]);
@@ -37,17 +37,18 @@ function Dashboard({
   // load reservations
   function loadDashboard() {
     const abortController = new AbortController();
-    setReservationsError(null);
+    setCurrentError(null);
     listReservations({ date }, abortController.signal)
       .then(setReservations)
-      .catch(setReservationsError);
+      .catch(setCurrentError);
     return () => abortController.abort();
   }
 
   // load tables
   function loadTable() {
     const abortController = new AbortController();
-    listTables(abortController.signal).then(setTables);
+    setCurrentError(null);
+    listTables(abortController.signal).then(setTables).catch(setCurrentError);
     return () => abortController.abort();
   }
 
@@ -59,9 +60,11 @@ function Dashboard({
       )
     ) {
       const abortController = new AbortController();
+      setCurrentError(null);
       removeTable(event.target.id, abortController.signal)
         .then(() => listTables(abortController.signal))
-        .then(setTables);
+        .then(setTables)
+        .catch(setCurrentError);
       return () => abortController.abort();
     }
   };
@@ -73,10 +76,12 @@ function Dashboard({
       )
     ) {
       const abortController = new AbortController();
-      updateRes(event.target.id, abortController.signal)
+      setCurrentError(null);
+      updateRes(event.target.id, "cancelled", abortController.signal)
         .then(() => listTables(abortController.signal))
         .then(setTables)
-        .then(loadDashboard);
+        .then(loadDashboard)
+        .catch(setCurrentError);
       return () => abortController.abort();
     }
   };
@@ -128,7 +133,7 @@ function Dashboard({
               <button onClick={() => setSelectedDate(next(date))}>Next</button>
             </div>
           </div>
-          <ErrorAlert error={reservationsError} />
+          <ErrorAlert className="alert alert-danger" error={currentError} />
           {Object.keys(reservations).length !== 0 ? (
             reservations.map((res, index) => {
               return (
@@ -211,6 +216,7 @@ function Dashboard({
         <div>
           <div>
             <h4>Tables:</h4>
+            <ErrorAlert className="alert alert-danger" error={currentError} />
           </div>
           {Object.keys(tables).length !== 0 ? (
             tables.map((tab, index) => {

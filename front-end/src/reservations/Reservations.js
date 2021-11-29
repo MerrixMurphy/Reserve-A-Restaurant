@@ -7,15 +7,12 @@ import {
   editRes,
   listReservations,
 } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
-function Reservations({
-  setWhichList,
-  whichList,
-  setReservations,
-  selectedDate,
-}) {
+function Reservations({ setWhichList, setReservations, selectedDate }) {
   const history = useHistory();
   const params = useParams();
+  const [currentError, setCurrentError] = useState(null);
 
   const defaultReservation = {
     first_name: "",
@@ -32,18 +29,20 @@ function Reservations({
 
   function listRes() {
     const abortController = new AbortController();
-    listReservations(selectedDate, abortController.signal).then(
-      setReservations
-    );
+    setCurrentError(null);
+    listReservations(selectedDate, abortController.signal)
+      .then(setReservations)
+      .catch(setCurrentError);
     return () => abortController.abort();
   }
 
   function editReservation() {
     if (params.reservation_id) {
       const abortController = new AbortController();
-      listOne(params.reservation_id, abortController.signal).then(
-        setReservation
-      );
+      setCurrentError(null);
+      listOne(params.reservation_id, abortController.signal)
+        .then(setReservation)
+        .catch(setCurrentError);
       return () => abortController.abort();
     }
   }
@@ -57,12 +56,15 @@ function Reservations({
 
   function saveReservation() {
     const abortController = new AbortController();
+    setCurrentError(null);
     reservation.people = Number(reservation.people);
     if (params.reservation_id) {
-      editRes(reservation, abortController.signal);
+      editRes(reservation, abortController.signal).catch(setCurrentError);
       listRes();
     } else {
-      createReservation(reservation, abortController.signal);
+      createReservation(reservation, abortController.signal).catch(
+        setCurrentError
+      );
     }
     return () => abortController.abort();
   }
@@ -70,14 +72,19 @@ function Reservations({
   const submitHandler = (event) => {
     event.preventDefault();
     if (!params.reservation_id) {
+      setWhichList("reservations");
       setReservation({ ...defaultReservation });
       saveReservation();
-      history.push(`/dashboard?date=${reservation.reservation_date}`);
+      if (currentError === null) {
+        history.push(`/dashboard?date=${reservation.reservation_date}`);
+      }
     } else {
       setWhichList("reservations");
       setReservation({ ...defaultReservation });
       saveReservation();
-      history.goBack();
+      if (currentError === null) {
+        history.goBack();
+      }
     }
   };
 
@@ -101,6 +108,9 @@ function Reservations({
           </div>
         </div>
       )}
+      {currentError ? (
+        <ErrorAlert className="alert alert-danger" error={currentError} />
+      ) : null}
       <form onSubmit={submitHandler}>
         <div className="col-1">
           <label htmlFor="first_name">

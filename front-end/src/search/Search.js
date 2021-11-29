@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
-import { listReservations, listTables, updateRes } from "../utils/api";
+import { listTables, searchRes, updateRes } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function Search({ tables, setTables }) {
   const history = useHistory();
   const [phoneSearch, setPhoneSearch] = useState({ mobile_phone: "" });
   const [firstSearch, setFirstSeach] = useState(true);
   const [matchSearch, setMatchSearch] = useState(null);
+  const [currentError, setCurrentError] = useState(null);
 
   const changeHandler = (event) => {
     setPhoneSearch({ mobile_phone: event.target.value });
@@ -14,7 +16,10 @@ function Search({ tables, setTables }) {
 
   function searchReservations() {
     const abortController = new AbortController();
-    listReservations(phoneSearch, abortController.signal).then(setMatchSearch);
+    setCurrentError(null);
+    searchRes(phoneSearch.mobile_phone, abortController.signal)
+      .then(setMatchSearch)
+      .catch(setCurrentError);
     return () => abortController.abort();
   }
 
@@ -22,7 +27,8 @@ function Search({ tables, setTables }) {
 
   function loadTable() {
     const abortController = new AbortController();
-    listTables(abortController.signal).then(setTables);
+    setCurrentError(null);
+    listTables(abortController.signal).then(setTables).catch(setCurrentError);
     return () => abortController.abort();
   }
 
@@ -38,10 +44,12 @@ function Search({ tables, setTables }) {
       )
     ) {
       const abortController = new AbortController();
-      updateRes(event.target.id, abortController.signal)
+      setCurrentError(null);
+      updateRes(event.target.id, "cancelled", abortController.signal)
         .then(() => listTables(abortController.signal))
         .then(setTables)
-        .then(searchReservations);
+        .then(searchReservations)
+        .catch(setCurrentError);
       return () => abortController.abort();
     }
   };
@@ -59,6 +67,7 @@ function Search({ tables, setTables }) {
         <h4 className="mb-0">Search a Reservation Phone Number Here!</h4>
       </div>
       <div className="col-1">
+        <ErrorAlert className="alert alert-danger" error={currentError} />
         <label htmlFor="mobile_number">
           Search:{" "}
           <input

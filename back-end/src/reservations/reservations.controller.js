@@ -12,7 +12,7 @@ function allFields(req, res, next) {
     });
   }
 
-  if (req.body.data.first_name) {
+  if (Object.keys(req.body.data).length > 1) {
     let error = "";
 
     const {
@@ -22,6 +22,7 @@ function allFields(req, res, next) {
       reservation_date,
       reservation_time,
       people,
+      status,
     } = req.body.data;
 
     const toCompare = [
@@ -34,7 +35,9 @@ function allFields(req, res, next) {
     ];
 
     const date = new Date();
-    let stringDate = `${date.getFullYear}-${date.getMonth}-${date.getDay}`;
+    let stringDate = `${date.getFullYear()}-${
+      date.getMonth() + 1
+    }-${date.getDate()}`;
 
     let [hour, minute] = "";
 
@@ -47,7 +50,7 @@ function allFields(req, res, next) {
         error = "people";
         next({
           status: 400,
-          message: `Error: No valid ${error} in the request.`,
+          message: `No valid ${error} in the request.`,
         });
       case !first_name ||
         !last_name ||
@@ -66,47 +69,54 @@ function allFields(req, res, next) {
         });
         next({
           status: 400,
-          message: `Error: No valid ${error} in the request.`,
+          message: `No valid ${error} in the request.`,
         });
       case typeof people != "number":
         error = "people";
         next({
           status: 400,
-          message: `Error: No valid ${error} in the request.`,
+          message: `No valid ${error} in the request.`,
         });
       case !Date.parse(reservation_date):
         error = "reservation_date";
         next({
           status: 400,
-          message: `Error: No valid ${error} in the request.`,
+          message: `No valid ${error} in the request.`,
         });
       case !reservation_time.match("[0-9]{2}:[0-9]{2}"):
         error = "reservation_time";
         next({
           status: 400,
-          message: `Error: No valid ${error} in the request.`,
+          message: `No valid ${error} in the request.`,
         });
-      case Date.parse(reservation_date) < Date.parse(stringDate):
-        next({
-          status: 400,
-          message: `Error: Please put a future reservation_date in the request.`,
-        });
-      case new Date(reservation_date).getDay() === 1:
-        next({
-          status: 400,
-          message: `Error: We are closed on this reservation_date.`,
-        });
-      case Number(hour) < 10 ||
-        (Number(hour) === 10 && Number(minute) <= 30) ||
-        Number(hour) > 21 ||
-        (Number(hour) === 21 && Number(minute) >= 30) ||
-        (date === reservation_date &&
+      case Date.parse(reservation_date) < Date.parse(stringDate) ||
+        (stringDate === reservation_date &&
           (Number(hour) < date.getHours() ||
             (Number(hour) === date.getHours() &&
               Number(minute) < date.getMinutes()))):
         next({
           status: 400,
-          message: `Error: We are closed on this reservation_date.`,
+          message: `Please put a future reservation_date in the request.`,
+        });
+      case new Date(reservation_date).getDay() === 1:
+        next({
+          status: 400,
+          message: `We are closed on this reservation_date.`,
+        });
+      case status === "finished" ||
+        status === "cancelled" ||
+        status === "seated":
+        next({
+          status: 400,
+          message: `Reservation with status: ${status} is not a valid status for creating.`,
+        });
+      case Number(hour) < 10 ||
+        (Number(hour) === 10 && Number(minute) <= 30) ||
+        Number(hour) > 21 ||
+        (Number(hour) === 21 && Number(minute) >= 30):
+        next({
+          status: 400,
+          message: `We are closed on this reservation_date.`,
         });
       default:
         res.locals.first_name = first_name;
@@ -118,26 +128,49 @@ function allFields(req, res, next) {
         return next();
     }
   }
+  const status = req.body.data.status;
+  if (
+    status !== "finished" &&
+    status !== "seated" &&
+    status !== "cancelled" &&
+    status !== "booked"
+  ) {
+    next({
+      status: 400,
+      message: `Reservation with status: ${req.body.data.status} is not a valid status for creating.`,
+    });
+  }
   return next();
 }
 
 async function correctId(req, res, next) {
   const id = await service.read(req.params.reservation_id);
   if (id) {
+    res.locals.currentRes = id;
     return next();
   }
   next({
     status: 404,
-    message: `Reservation $${req.params.reservation_id} cannot be found.`,
+    message: `Reservation ID: ${req.params.reservation_id} cannot be found.`,
   });
+}
+
+function isFinished(req, res, next) {
+  if (res.locals.currentRes.status === "finished") {
+    next({
+      status: 400,
+      message: `Reservation's with status: ${res.locals.currentRes.status} cannot be edited.`,
+    });
+  }
+  return next();
 }
 
 async function list(req, res) {
   if (req.query.date) {
     const data = await service.list(req.query.date);
     res.json({ data });
-  } else if (req.query.mobile_phone) {
-    const data = await service.search(req.query.mobile_phone);
+  } else if (req.query.mobile_number) {
+    const data = await service.search(req.query.mobile_number);
     res.json({ data });
   }
 }
@@ -172,5 +205,15 @@ module.exports = {
   read: [asyncErrorBoundary(correctId), asyncErrorBoundary(read)],
   list: [asyncErrorBoundary(list)],
   create: [allFields, asyncErrorBoundary(create)],
-  update: [allFields, asyncErrorBoundary(update)],
+  update: [
+    asyncErrorBoundary(correctId),
+    allFields,
+    asyncErrorBoundary(update),
+  ],
+  updateStatus: [
+    asyncErrorBoundary(correctId),
+    isFinished,
+    allFields,
+    asyncErrorBoundary(update),
+  ],
 };

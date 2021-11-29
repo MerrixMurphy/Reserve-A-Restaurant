@@ -6,10 +6,12 @@ import {
   listTables,
   listReservations,
 } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function Seat({ setReservations, selectedDate }) {
   const history = useHistory();
   const params = useParams();
+  const [currentError, setCurrentError] = useState(null);
 
   const [seat, setSeat] = useState([]);
   const [tables, setTables] = useState([]);
@@ -31,34 +33,44 @@ function Seat({ setReservations, selectedDate }) {
 
   function loadSeat() {
     const abortController = new AbortController();
-    listOne(params.reservation_id, abortController.signal).then(setSeat);
+    setCurrentError(null);
+    listOne(params.reservation_id, abortController.signal)
+      .then(setSeat)
+      .catch(setCurrentError);
     return () => abortController.abort();
   }
 
   function loadTable() {
     const abortController = new AbortController();
-    listTables(abortController.signal).then(setTables);
+    setCurrentError(null);
+    listTables(abortController.signal).then(setTables).catch(setCurrentError);
     return () => abortController.abort();
   }
 
   function listRes() {
     const abortController = new AbortController();
-    listReservations(selectedDate, abortController.signal).then(
-      setReservations
-    );
+    setCurrentError(null);
+    listReservations(selectedDate, abortController.signal)
+      .then(setReservations)
+      .catch(setCurrentError);
     return () => abortController.abort();
   }
 
   function updateTab() {
     const abortController = new AbortController();
+    setCurrentError(null);
     if (currentTable) {
-      updateTable(currentTable, seat.reservation_id, abortController.signal);
+      updateTable(
+        currentTable,
+        seat.reservation_id,
+        abortController.signal
+      ).catch(setCurrentError);
     } else {
       updateTable(
         firstTable.table_id,
         seat.reservation_id,
         abortController.signal
-      );
+      ).catch(setCurrentError);
     }
     return () => abortController.abort();
   }
@@ -71,12 +83,15 @@ function Seat({ setReservations, selectedDate }) {
     event.preventDefault();
     updateTab();
     listRes();
-    history.push("/dashboard");
+    if (currentError === null) {
+      history.push("/dashboard");
+    }
   };
 
   return (
     <main>
       <h1>Seat Table Here:</h1>
+      <ErrorAlert className="alert alert-danger" error={currentError} />
       <form onSubmit={submitHandler}>
         {Object.keys(seat).length !== 0 ? (
           <div>

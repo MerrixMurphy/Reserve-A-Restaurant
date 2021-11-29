@@ -21,7 +21,7 @@ function allFields(req, res, next) {
       error = "capacity";
       next({
         status: 400,
-        message: `Error: No valid ${error} in the request.`,
+        message: `No valid ${error} in the request.`,
       });
     case !capacity || !table_name:
       error = toCompare.filter((compare) => {
@@ -35,19 +35,19 @@ function allFields(req, res, next) {
       });
       next({
         status: 400,
-        message: `Error: No valid ${error} in the request.`,
+        message: `No valid ${error} in the request.`,
       });
     case table_name.length <= 1:
       error = "table_name";
       next({
         status: 400,
-        message: `Error: No valid ${error} in the request.`,
+        message: `No valid ${error} in the request.`,
       });
     case typeof capacity != "number":
       error = "capacity";
       next({
         status: 400,
-        message: `Error: No valid ${error} in the request.`,
+        message: `No valid ${error} in the request.`,
       });
     default:
       res.locals.table_name = table_name;
@@ -78,14 +78,14 @@ async function beforeUpdate(req, res, next) {
     error = req.body.data.reservation_id;
     next({
       status: 404,
-      message: `Error: Reservation ID - ${error} does not exist.`,
+      message: `Reservation ID - ${error} does not exist.`,
     });
   }
 
   if (reservationData.status === "seated") {
     next({
       status: 400,
-      message: `Error: Reservation is currently seated.`,
+      message: `Reservation is currently seated.`,
     });
   }
 
@@ -93,14 +93,14 @@ async function beforeUpdate(req, res, next) {
     error = "capacity";
     next({
       status: 400,
-      message: `Error: No valid ${error} in the request.`,
+      message: `No valid ${error} in the request.`,
     });
   }
 
   if (tableData.reservation_id) {
     return next({
       status: 400,
-      message: `Error: Table is currently occupied.`,
+      message: `Table is currently occupied.`,
     });
   }
 

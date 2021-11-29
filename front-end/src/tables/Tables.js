@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import { createTable, listTables } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function Tables({ setWhichList, setTables }) {
   const history = useHistory();
+  const [currentError, setCurrentError] = useState(null);
 
   const defaultTable = {
     table_name: "",
@@ -28,7 +30,8 @@ function Tables({ setWhichList, setTables }) {
 
   function saveTable() {
     const abortController = new AbortController();
-    createTable(table, abortController.signal);
+    setCurrentError(null);
+    createTable(table, abortController.signal).catch(setCurrentError);
     return () => abortController.abort();
   }
 
@@ -38,8 +41,11 @@ function Tables({ setWhichList, setTables }) {
     setTable({ ...defaultTable });
     setWhichList("tables");
     const abortController = new AbortController();
-    listTables(abortController.signal).then(setTables);
-    history.push(`/dashboard`);
+    setCurrentError(null);
+    listTables(abortController.signal).then(setTables).catch(setCurrentError);
+    if (currentError === null) {
+      history.push(`/dashboard`);
+    }
     return () => abortController.abort();
   };
 
@@ -48,6 +54,7 @@ function Tables({ setWhichList, setTables }) {
       <h1>New Table</h1>
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Create A New Table Here!</h4>
+        <ErrorAlert className="alert alert-danger" error={currentError} />
       </div>
       <form onSubmit={submitHandler}>
         <div className="col-1">
