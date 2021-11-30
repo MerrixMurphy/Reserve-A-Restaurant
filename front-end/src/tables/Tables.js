@@ -3,9 +3,8 @@ import { useHistory } from "react-router";
 import { createTable, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function Tables({ setWhichList, setTables }) {
+function Tables({ setWhichList, setTables, currentError, setCurrentError }) {
   const history = useHistory();
-  const [currentError, setCurrentError] = useState(null);
 
   const defaultTable = {
     table_name: "",
@@ -31,21 +30,20 @@ function Tables({ setWhichList, setTables }) {
   function saveTable() {
     const abortController = new AbortController();
     setCurrentError(null);
-    createTable(table, abortController.signal).catch(setCurrentError);
+    createTable(table, abortController.signal)
+      .catch(setCurrentError)
+      .then((err) => (err ? history.push(`/dashboard`) : null));
     return () => abortController.abort();
   }
 
   const submitHandler = (event) => {
     event.preventDefault();
-    saveTable();
     setTable({ ...defaultTable });
     setWhichList("tables");
     const abortController = new AbortController();
     setCurrentError(null);
+    saveTable();
     listTables(abortController.signal).then(setTables).catch(setCurrentError);
-    if (currentError === null) {
-      history.push(`/dashboard`);
-    }
     return () => abortController.abort();
   };
 

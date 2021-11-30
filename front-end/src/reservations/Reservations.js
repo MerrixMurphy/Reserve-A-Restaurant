@@ -1,40 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useHistory, useParams } from "react-router";
 import { today } from "../utils/date-time";
-import {
-  createReservation,
-  listOne,
-  editRes,
-  listReservations,
-} from "../utils/api";
+import { createReservation, listOne, editRes } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function Reservations({ setWhichList, setReservations, selectedDate }) {
+function Reservations({
+  setWhichList,
+  currentError,
+  setCurrentError,
+  reservation,
+  setReservation,
+  defaultReservation,
+}) {
   const history = useHistory();
   const params = useParams();
-  const [currentError, setCurrentError] = useState(null);
 
-  const defaultReservation = {
-    first_name: "",
-    last_name: "",
-    mobile_number: "",
-    reservation_date: "",
-    reservation_time: "",
-    people: "1",
-  };
-
-  useEffect(editReservation, [params]);
-
-  const [reservation, setReservation] = useState({ ...defaultReservation });
-
-  function listRes() {
-    const abortController = new AbortController();
-    setCurrentError(null);
-    listReservations(selectedDate, abortController.signal)
-      .then(setReservations)
-      .catch(setCurrentError);
-    return () => abortController.abort();
-  }
+  useEffect(editReservation, [params, setCurrentError, setReservation]);
 
   function editReservation() {
     if (params.reservation_id) {
@@ -59,38 +40,33 @@ function Reservations({ setWhichList, setReservations, selectedDate }) {
     setCurrentError(null);
     reservation.people = Number(reservation.people);
     if (params.reservation_id) {
-      editRes(reservation, abortController.signal).catch(setCurrentError);
-      listRes();
+      editRes(reservation, abortController.signal)
+        .then(() => history.goBack())
+        .catch((err) => setCurrentError(err));
     } else {
-      createReservation(reservation, abortController.signal).catch(
-        setCurrentError
-      );
+      createReservation(reservation, abortController.signal)
+        .catch(setCurrentError)
+        .then((err) =>
+          err
+            ? history.push(`/dashboard?date=${reservation.reservation_date}`)
+            : null
+        );
     }
     return () => abortController.abort();
   }
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
-    if (!params.reservation_id) {
-      setWhichList("reservations");
-      setReservation({ ...defaultReservation });
-      saveReservation();
-      if (currentError === null) {
-        history.push(`/dashboard?date=${reservation.reservation_date}`);
-      }
-    } else {
-      setWhichList("reservations");
-      setReservation({ ...defaultReservation });
-      saveReservation();
-      if (currentError === null) {
-        history.goBack();
-      }
-    }
+    setWhichList("reservations");
+    setReservation({ ...defaultReservation });
+    saveReservation();
   };
 
   const [year, month, day] = today().split("-");
   const maxDate = `${Number(year) + 50}-${month}-${day}`;
-  reservation.reservation_date = reservation.reservation_date.slice(0, 10);
+  console.log(reservation);
+  if (!Array.isArray(reservation))
+    reservation.reservation_date = reservation.reservation_date.slice(0, 10);
   return (
     <main>
       {!params.reservation_id ? (

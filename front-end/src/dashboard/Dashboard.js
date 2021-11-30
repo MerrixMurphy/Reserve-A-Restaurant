@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   listReservations,
   listTables,
@@ -24,15 +24,16 @@ function Dashboard({
   setTables,
   reservations,
   setReservations,
+  currentError,
+  setCurrentError,
 }) {
   const history = useHistory();
-  const [currentError, setCurrentError] = useState(null);
 
   //load list of reservations on date change
-  useEffect(loadDashboard, [date, setReservations]);
+  useEffect(loadDashboard, [date, setReservations, setCurrentError]);
 
   // load list of tables on load.
-  useEffect(loadTable, [setTables]);
+  useEffect(loadTable, [setTables, setCurrentError]);
 
   // load reservations
   function loadDashboard() {

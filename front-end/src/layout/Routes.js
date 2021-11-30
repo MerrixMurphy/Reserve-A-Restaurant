@@ -23,6 +23,16 @@ function Routes() {
   const [whichList, setWhichList] = useState("reservations");
   const [tables, setTables] = useState([]);
   const [reservations, setReservations] = useState([]);
+  const [currentError, setCurrentError] = useState(null);
+  const defaultReservation = {
+    first_name: "",
+    last_name: "",
+    mobile_number: "",
+    reservation_date: "",
+    reservation_time: "",
+    people: "1",
+  };
+  const [reservation, setReservation] = useState({ ...defaultReservation });
   const query = new URLSearchParams(useLocation().search);
   let specificDate = query.get("date");
 
@@ -50,27 +60,48 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route exact={true} path="/reservations/new">
-        <Reservations setWhichList={setWhichList} />
+        <Reservations
+          setWhichList={setWhichList}
+          currentError={currentError}
+          setCurrentError={setCurrentError}
+          reservation={reservation}
+          setReservation={setReservation}
+          defaultReservation={defaultReservation}
+        />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
-        <Seat setReservations={setReservations} selectedDate={selectedDate} />
+        <Seat
+          setReservations={setReservations}
+          selectedDate={selectedDate}
+          currentError={currentError}
+          setCurrentError={setCurrentError}
+        />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/edit">
         <Reservations
           setWhichList={setWhichList}
-          whichList={whichList}
-          setReservations={setReservations}
-          selectedDate={selectedDate}
+          currentError={currentError}
+          setCurrentError={setCurrentError}
+          reservation={reservation}
+          setReservation={setReservation}
+          defaultReservation={defaultReservation}
         />
       </Route>
       <Route exact={true} path="/tables/new">
-        <Tables setWhichList={setWhichList} setTables={setTables} />
+        <Tables
+          setWhichList={setWhichList}
+          setTables={setTables}
+          currentError={currentError}
+          setCurrentError={setCurrentError}
+        />
       </Route>
       <Route path="/search">
         <Search
           tables={tables}
           setTables={setTables}
           setReservations={setReservations}
+          currentError={currentError}
+          setCurrentError={setCurrentError}
         />
       </Route>
       <Route path="/dashboard">
@@ -83,6 +114,8 @@ function Routes() {
           setTables={setTables}
           reservations={reservations}
           setReservations={setReservations}
+          currentError={currentError}
+          setCurrentError={setCurrentError}
         />
       </Route>
       <Route>

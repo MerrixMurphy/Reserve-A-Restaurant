@@ -8,19 +8,23 @@ import {
 } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function Seat({ setReservations, selectedDate }) {
+function Seat({
+  setReservations,
+  selectedDate,
+  currentError,
+  setCurrentError,
+}) {
   const history = useHistory();
   const params = useParams();
-  const [currentError, setCurrentError] = useState(null);
 
   const [seat, setSeat] = useState([]);
   const [tables, setTables] = useState([]);
   const [firstTable, setFirstTable] = useState();
   const [currentTable, setCurrentTable] = useState();
 
-  useEffect(loadSeat, [params.reservation_id]);
+  useEffect(loadSeat, [params.reservation_id, setCurrentError]);
 
-  useEffect(loadTable, []);
+  useEffect(loadTable, [setCurrentError]);
 
   useEffect(() => {
     if (seat.people) {
@@ -60,17 +64,17 @@ function Seat({ setReservations, selectedDate }) {
     const abortController = new AbortController();
     setCurrentError(null);
     if (currentTable) {
-      updateTable(
-        currentTable,
-        seat.reservation_id,
-        abortController.signal
-      ).catch(setCurrentError);
+      updateTable(currentTable, seat.reservation_id, abortController.signal)
+        .catch(setCurrentError)
+        .then((err) => (err ? history.push("/dashboard") : null));
     } else {
       updateTable(
         firstTable.table_id,
         seat.reservation_id,
         abortController.signal
-      ).catch(setCurrentError);
+      )
+        .catch(setCurrentError)
+        .then((err) => (err ? history.push("/dashboard") : null));
     }
     return () => abortController.abort();
   }
@@ -83,9 +87,6 @@ function Seat({ setReservations, selectedDate }) {
     event.preventDefault();
     updateTab();
     listRes();
-    if (currentError === null) {
-      history.push("/dashboard");
-    }
   };
 
   return (

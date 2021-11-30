@@ -3,12 +3,11 @@ import { useHistory } from "react-router";
 import { listTables, searchRes, updateRes } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function Search({ tables, setTables }) {
+function Search({ tables, setTables, currentError, setCurrentError }) {
   const history = useHistory();
   const [phoneSearch, setPhoneSearch] = useState({ mobile_phone: "" });
   const [firstSearch, setFirstSeach] = useState(true);
   const [matchSearch, setMatchSearch] = useState(null);
-  const [currentError, setCurrentError] = useState(null);
 
   const changeHandler = (event) => {
     setPhoneSearch({ mobile_phone: event.target.value });
@@ -23,7 +22,7 @@ function Search({ tables, setTables }) {
     return () => abortController.abort();
   }
 
-  useEffect(loadTable, [setTables]);
+  useEffect(loadTable, [setTables, setCurrentError]);
 
   function loadTable() {
     const abortController = new AbortController();
@@ -88,6 +87,7 @@ function Search({ tables, setTables }) {
         Object.keys(reservationsList).length !== 0 ? (
           reservationsList.map((res, index) => {
             res.mobile_number = res.mobile_number.split("-").join("");
+            res.reservation_date = res.reservation_date.slice(0, 10);
             return (
               <div key={index}>
                 <table className="table border mt-3 text-center">
