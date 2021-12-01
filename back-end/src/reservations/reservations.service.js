@@ -1,4 +1,5 @@
 const knex = require("../db/connection");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 function list(date) {
   return knex("reservations")
@@ -12,11 +13,9 @@ function read(id) {
   return knex("reservations").select("*").where({ reservation_id: id }).first();
 }
 
-function create(reservation) {
-  return knex("reservations")
-    .insert(reservation)
-    .returning("*")
-    .then((res) => res[0]);
+async function create(reservation) {
+  const res = await knex("reservations").insert(reservation).returning("*");
+  return res[0];
 }
 
 function search(mobile_number) {
@@ -28,29 +27,29 @@ function search(mobile_number) {
     .orderBy(["reservation_date", "reservation_time"]);
 }
 
-function update(id, status) {
-  return knex("reservations")
+async function update(id, status) {
+  const res = await knex("reservations")
     .select("*")
     .where({ reservation_id: id })
     .update("status", status)
-    .returning("*")
-    .then((res) => res[0]);
+    .returning("*");
+  return res[0];
 }
 
-function updateAll(res) {
-  return knex("reservations")
+async function updateAll(res) {
+  const res_1 = await knex("reservations")
     .select("*")
     .where({ reservation_id: res.reservation_id })
     .update(res, "*")
-    .returning("*")
-    .then((res) => res[0]);
+    .returning("*");
+  return res_1[0];
 }
 
 module.exports = {
   read,
   list,
-  create,
+  create: asyncErrorBoundary(create),
   search,
-  update,
-  updateAll,
+  update: asyncErrorBoundary(update),
+  updateAll: asyncErrorBoundary(updateAll),
 };

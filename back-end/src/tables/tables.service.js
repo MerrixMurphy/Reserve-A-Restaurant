@@ -1,4 +1,5 @@
 const knex = require("../db/connection");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 function list() {
   return knex("tables").select("*").orderBy("table_name");
@@ -12,18 +13,18 @@ function create(table) {
   return knex("tables").insert(table);
 }
 
-function update(id, resId) {
-  return knex("tables")
+async function update(id, resId) {
+  const tab = await knex("tables")
     .select("*")
     .where({ table_id: id })
     .update("reservation_id", resId)
-    .returning("*")
-    .then((tab) => tab[0]);
+    .returning("*");
+  return tab[0];
 }
 
 module.exports = {
   list,
   create,
-  update,
+  update: asyncErrorBoundary(update),
   read,
 };
