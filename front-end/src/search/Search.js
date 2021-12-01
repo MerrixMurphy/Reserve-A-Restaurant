@@ -47,7 +47,7 @@ function Search({ tables, setTables, currentError, setCurrentError }) {
       updateRes(event.target.id, "cancelled", abortController.signal)
         .then(() => listTables(abortController.signal))
         .then(setTables)
-        .then(searchReservations)
+        .then(() => searchReservations())
         .catch(setCurrentError);
       return () => abortController.abort();
     }
