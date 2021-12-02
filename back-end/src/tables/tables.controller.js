@@ -18,12 +18,12 @@ async function create(req, res) {
   res.status(201).json({ data });
 }
 
-function toUpdate(req, res) {
-  reservationService.update(
+async function toUpdate(req, res) {
+  await reservationService.update(
     res.locals.reservationData.reservation_id,
     "seated"
   );
-  tableService.update(
+  await tableService.update(
     res.locals.tableData.table_id,
     res.locals.reservationData.reservation_id
   );
@@ -32,15 +32,15 @@ function toUpdate(req, res) {
     .json({ data: { reservation_id: res.locals.fieldValTab.reservation_id } });
 }
 
-function destroy(req, res) {
-  reservationService.update(res.locals.table.reservation_id, "finished");
-  const data = tableService.update(res.locals.params, null);
+async function destroy(req, res) {
+  await reservationService.update(res.locals.table.reservation_id, "finished");
+  const data = await tableService.update(res.locals.params, null);
   res.status(200).json({ data });
 }
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [beforeCreate, asyncErrorBoundary(create)],
-  update: [asyncErrorBoundary(beforeUpdate), toUpdate],
-  delete: [asyncErrorBoundary(beforeDestroy), destroy],
+  update: [asyncErrorBoundary(beforeUpdate), asyncErrorBoundary(toUpdate)],
+  delete: [asyncErrorBoundary(beforeDestroy), asyncErrorBoundary(destroy)],
 };

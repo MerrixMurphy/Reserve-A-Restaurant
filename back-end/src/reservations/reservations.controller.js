@@ -26,18 +26,18 @@ function read(req, res) {
   res.status(200).json({ data });
 }
 
-function create(req, res) {
+async function create(req, res) {
   const data = res.locals.fieldValRes;
-  service.create(data);
+  await service.create(data);
   res.status(201).json({ data });
 }
 
-function update(req, res) {
+async function update(req, res) {
   let data = null;
   if (res.locals.fieldValRes.reservation_id) {
-    data = service.updateAll(req.body.data);
+    data = await service.updateAll(req.body.data);
   } else {
-    data = service.update(res.locals.paramsId, res.locals.status);
+    data = await service.update(res.locals.paramsId, res.locals.status);
   }
   res.status(200).json({ data });
 }
@@ -45,7 +45,16 @@ function update(req, res) {
 module.exports = {
   read: [asyncErrorBoundary(correctId), read],
   list: [asyncErrorBoundary(list)],
-  create: [resFields, create],
-  update: [asyncErrorBoundary(correctId), resFields, update],
-  updateStatus: [asyncErrorBoundary(correctId), isFinished, resFields, update],
+  create: [resFields, asyncErrorBoundary(create)],
+  update: [
+    asyncErrorBoundary(correctId),
+    resFields,
+    asyncErrorBoundary(update),
+  ],
+  updateStatus: [
+    asyncErrorBoundary(correctId),
+    isFinished,
+    resFields,
+    asyncErrorBoundary(update),
+  ],
 };

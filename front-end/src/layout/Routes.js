@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+
+import { today } from "../utils/date-time";
 import Dashboard from "../dashboard/Dashboard";
 import Tables from "../tables/Tables";
 import Reservations from "../reservations/Reservations";
 import Seat from "../seat/Seat";
 import Search from "../search/Search";
 import NotFound from "./NotFound";
-import { today } from "../utils/date-time";
-import { useHistory } from "react-router";
 
 /**
  * Defines all the routes for the application.
@@ -19,24 +20,14 @@ import { useHistory } from "react-router";
 
 function Routes() {
   const history = useHistory();
+  const query = new URLSearchParams(useLocation().search);
+  const url = useLocation().pathname;
+  let specificDate = query.get("date");
+
   const [selectedDate, setSelectedDate] = useState(today());
   const [whichList, setWhichList] = useState("reservations");
   const [tables, setTables] = useState([]);
   const [reservations, setReservations] = useState([]);
-  const [currentError, setCurrentError] = useState(null);
-  const defaultReservation = {
-    first_name: "",
-    last_name: "",
-    mobile_number: "",
-    reservation_date: "",
-    reservation_time: "",
-    people: "1",
-  };
-  const [reservation, setReservation] = useState({ ...defaultReservation });
-  const query = new URLSearchParams(useLocation().search);
-  let specificDate = query.get("date");
-
-  const url = useLocation().pathname;
 
   useEffect(() => {
     if (specificDate) {
@@ -62,47 +53,25 @@ function Routes() {
       <Route exact={true} path="/reservations/new">
         <Reservations
           setWhichList={setWhichList}
-          currentError={currentError}
-          setCurrentError={setCurrentError}
-          reservation={reservation}
-          setReservation={setReservation}
-          defaultReservation={defaultReservation}
-        />
-      </Route>
-      <Route exact={true} path="/reservations/:reservation_id/seat">
-        <Seat
           setReservations={setReservations}
           selectedDate={selectedDate}
-          currentError={currentError}
-          setCurrentError={setCurrentError}
         />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/edit">
         <Reservations
           setWhichList={setWhichList}
-          currentError={currentError}
-          setCurrentError={setCurrentError}
-          reservation={reservation}
-          setReservation={setReservation}
-          defaultReservation={defaultReservation}
+          setReservations={setReservations}
+          selectedDate={selectedDate}
         />
+      </Route>
+      <Route exact={true} path="/reservations/:reservation_id/seat">
+        <Seat setReservations={setReservations} selectedDate={selectedDate} />
       </Route>
       <Route exact={true} path="/tables/new">
-        <Tables
-          setWhichList={setWhichList}
-          setTables={setTables}
-          currentError={currentError}
-          setCurrentError={setCurrentError}
-        />
+        <Tables setWhichList={setWhichList} setTables={setTables} />
       </Route>
       <Route path="/search">
-        <Search
-          tables={tables}
-          setTables={setTables}
-          setReservations={setReservations}
-          currentError={currentError}
-          setCurrentError={setCurrentError}
-        />
+        <Search setTables={setTables} />
       </Route>
       <Route path="/dashboard">
         <Dashboard
@@ -114,8 +83,6 @@ function Routes() {
           setTables={setTables}
           reservations={reservations}
           setReservations={setReservations}
-          currentError={currentError}
-          setCurrentError={setCurrentError}
         />
       </Route>
       <Route>

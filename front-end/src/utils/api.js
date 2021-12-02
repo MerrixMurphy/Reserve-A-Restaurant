@@ -84,7 +84,9 @@ export async function listTables(signal) {
 
 export async function listOne(params, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${params}`);
-  return await fetchJson(url, { headers, signal }, []);
+  return await fetchJson(url, { headers, signal }, [])
+    .then(formatReservationDate)
+    .then(formatReservationTime);
 }
 
 export async function createTable(newTab, signal) {
@@ -159,5 +161,7 @@ export async function searchRes(mobile_number, signal) {
     `${API_BASE_URL}/reservations/?mobile_number=${mobile_number}`
   );
 
-  return await fetchJson(url, { headers, signal }, []);
+  return await fetchJson(url, { headers, signal }, [])
+    .then(formatReservationDate)
+    .then(formatReservationTime);
 }
