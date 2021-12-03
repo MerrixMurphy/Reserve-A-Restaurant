@@ -14,10 +14,7 @@ function Tables({ setWhichList, setTables }) {
   return (
     <main>
       <h1>New Table</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Create A New Table Here!</h4>
-        <ErrorAlert className="alert alert-danger" error={currentError} />
-      </div>
+      <ErrorAlert className="alert alert-danger" error={currentError} />
       <TablesForm
         setWhichList={setWhichList}
         setTables={setTables}

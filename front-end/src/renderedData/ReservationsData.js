@@ -112,7 +112,9 @@ function ReservationsData({
       );
     })
   ) : (
-    <h3>No reservations found</h3>
+    <div className="container">
+      <h3>No reservations found</h3>
+    </div>
   );
 }
 

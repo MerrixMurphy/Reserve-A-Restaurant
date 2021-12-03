@@ -36,13 +36,14 @@ function resFields(req, res, next) {
     let stringDate = `${date.getFullYear()}-${
       date.getMonth() + 1
     }-${date.getDate()}`;
-
+    if (stringDate.length !== 10) {
+      stringDate = stringDate.slice(0, 8) + "0" + stringDate.slice(8);
+    }
     let [hour, minute] = "";
 
     if (reservation_time) {
       [hour, minute] = reservation_time.split(":");
     }
-
     switch (true) {
       case people === 0:
         error = "people";
@@ -268,6 +269,12 @@ async function beforeUpdate(req, res, next) {
 
 async function beforeDestroy(req, res, next) {
   res.locals.params = req.params.table_id;
+  if (res.locals.params === "null") {
+    next({
+      status: 404,
+      message: `No Tables available right now.`,
+    });
+  }
   const table = await tableService.read(res.locals.params);
   if (table) {
     res.locals.table = table;

@@ -1,24 +1,107 @@
 .side-bar {
-  background-color: #241102;
   min-width: 200px;
 }
 
 th {
-  background: #241102;
   color: rgb(255, 255, 255);
 }
+
+th,
+.side-bar,
+form,
+.formlikediv {
+  background-color: #241102;
+}
+
+h1,
+h4,
+label {
+  color: white;
+  text-align: center;
+  background-color: #241102;
+}
+
+.uncolorlabel {
+  background-color: unset;
+}
+
+.mainbg {
+  background-color: #523f31;
+  min-height: 100vh;
+  max-height: 100%;
+}
+
+.bgcolor {
+  background-color: #523f31;
+}
+
+.listswitch {
+  display: flex;
+  justify-content: space-evenly;
+  width: 90vw;
+  background-color: white;
+}
+
 th,
 button {
   padding: 6px;
   font-weight: bold;
 }
 
-@media only screen and (max-width: 800px) {
-  tbody,
+input,
+label {
+  width: 200px;
+}
+
+form,
+.formlikediv {
+  min-width: 300px;
+  padding: 30px 0px 50px 0px;
+}
+
+h3 {
+  margin: 20px 0px;
+  padding: 5px 0px;
+  background-color: red;
+}
+
+h1 {
+  padding-bottom: 15px;
+}
+
+h4,
+label,
+.clearmargin {
+  margin: 0;
+}
+
+.custbutton {
+  border: none;
+  background: none;
+  background-color: white;
+  width: 50%;
+}
+
+.smcustbutton {
+  border: none;
+  background: none;
+  background-color: white;
+  width: 33.33%;
+}
+
+@media only screen and (max-width: 1000px) {
   th,
   td,
   thead {
     display: block;
+  }
+
+  tbody {
+    display: flex;
+  }
+
+  tr {
+    flex: 1;
   }
 
   thead {

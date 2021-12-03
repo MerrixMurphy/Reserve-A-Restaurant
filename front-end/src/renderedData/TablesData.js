@@ -20,7 +20,7 @@ function TablesData({ setCurrentError, setTables, tables }) {
   return Object.keys(tables).length !== 0 ? (
     tables.map((tab, index) => {
       return (
-        <div key={index}>
+        <div key={index} className="container">
           <table className="table border mt-3 text-center">
             <thead>
               <tr>

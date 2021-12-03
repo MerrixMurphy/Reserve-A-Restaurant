@@ -62,34 +62,46 @@ function Dashboard({
   ];
 
   return (
-    <main className="text-center">
-      <h1>Dashboard</h1>
+    <main className="text-center ">
+      <h1 className="clearmargin">Dashboard</h1>
       <div className="text-center">
-        <button onClick={() => setWhichList("reservations")}>
+        <button
+          className="custbutton"
+          onClick={() => setWhichList("reservations")}
+        >
           Reservations
         </button>
-        <button onClick={() => setWhichList("tables")}>Tables</button>
+        <button className="custbutton" onClick={() => setWhichList("tables")}>
+          Tables
+        </button>
       </div>
       {whichList === "reservations" ? (
         <div>
           <div>
-            <h4>Reservations for:</h4>
-            <h4>
+            <h4 className="pt-2">Reservations for</h4>
+            <h4 className="pb-2">
               {monthNames[month - 1]} {day}, {year}
             </h4>
           </div>
-          <div className="d-flex justify-content-center">
-            <div className="mr-3">
-              <button onClick={() => setSelectedDate(previous(date))}>
-                Previous
-              </button>
-            </div>
-            <div className="mr-3">
-              <button onClick={() => setSelectedDate(today)}>Today</button>
-            </div>
-            <div className="mr-3">
-              <button onClick={() => setSelectedDate(next(date))}>Next</button>
-            </div>
+          <div>
+            <button
+              className="smcustbutton"
+              onClick={() => setSelectedDate(previous(date))}
+            >
+              Previous
+            </button>
+            <button
+              className="smcustbutton"
+              onClick={() => setSelectedDate(today)}
+            >
+              Today
+            </button>
+            <button
+              className="smcustbutton"
+              onClick={() => setSelectedDate(next(date))}
+            >
+              Next
+            </button>
           </div>
           <ErrorAlert className="alert alert-danger" error={currentError} />
           <ReservationsData
@@ -102,7 +114,7 @@ function Dashboard({
       ) : (
         <div>
           <div>
-            <h4>Tables:</h4>
+            <h4 className="py-2">Tables</h4>
           </div>
           <ErrorAlert className="alert alert-danger" error={currentError} />
           <TablesData

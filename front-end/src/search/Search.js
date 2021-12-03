@@ -46,37 +46,43 @@ function Search({ setTables }) {
   return (
     <main className="text-center">
       <h1>New Search</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Search a Reservation Phone Number Here!</h4>
+      <ErrorAlert className="alert alert-danger" error={currentError} />
+      <div className="d-flex justify-content-center">
+        <div className="formlikediv col-1 text-center">
+          <div>
+            <h4 className="pb-4">Search a Reservation Phone Number Here!</h4>
+            <label htmlFor="mobile_number">
+              Search
+              <input
+                name="mobile_number"
+                id="mobile_number"
+                type="tel"
+                value={phoneSearch.mobile_phone}
+                onChange={changeHandler}
+                placeholder="Enter a customer's phone number"
+                maxLength="10"
+                minLength="10"
+                required
+              />
+            </label>
+          </div>
+          <button className="mt-3" onClick={find}>
+            Find
+          </button>
+        </div>
       </div>
-      <div className="col-1">
-        <ErrorAlert className="alert alert-danger" error={currentError} />
-        <label htmlFor="mobile_number">
-          Search:{" "}
-          <input
-            name="mobile_number"
-            id="mobile_number"
-            type="tel"
-            value={phoneSearch.mobile_phone}
-            onChange={changeHandler}
-            placeholder="Enter a customer's phone number"
-            maxLength="10"
-            minLength="10"
-            required
+      {!firstSearch ? (
+        matchSearch ? (
+          <ReservationsData
+            setCurrentError={setCurrentError}
+            setTables={setTables}
+            loadResults={searchReservations}
+            reservationsList={matchSearch}
           />
-        </label>
-      </div>
-      <button onClick={find}>Find</button>
-      {firstSearch ? null : matchSearch ? (
-        <ReservationsData
-          setCurrentError={setCurrentError}
-          setTables={setTables}
-          loadResults={searchReservations}
-          reservationsList={matchSearch}
-        />
-      ) : (
-        <h3>No reservations found</h3>
-      )}
+        ) : (
+          <h3>No reservations found</h3>
+        )
+      ) : null}
     </main>
   );
 }

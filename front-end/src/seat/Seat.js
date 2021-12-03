@@ -35,7 +35,7 @@ function Seat({ setReservations, selectedDate }) {
       const firstTab = tables.find(
         (tab) => tab.capacity >= seat.people && tab.reservation_id === null
       );
-      setFirstTable(firstTab);
+      firstTab ? setFirstTable(firstTab) : setFirstTable(null);
     }
   }
 
@@ -45,7 +45,7 @@ function Seat({ setReservations, selectedDate }) {
 
   return (
     <main>
-      <h1>Seat Table Here:</h1>
+      <h1 className="py-4">Seat Table Here</h1>
       <ErrorAlert className="alert alert-danger" error={currentError} />
       <SeatForm
         setReservations={setReservations}

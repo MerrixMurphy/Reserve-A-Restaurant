@@ -1,5 +1,5 @@
 import { useHistory } from "react-router";
-import { updateTable, listReservations } from "../utils/api";
+import { updateTable, listReservations, removeTable } from "../utils/api";
 
 function SeatForm({
   setReservations,
@@ -30,13 +30,17 @@ function SeatForm({
         .then(() => history.push("/dashboard"))
         .catch((err) => setCurrentError(err));
     } else {
-      updateTable(
-        firstTable.table_id,
-        seat.reservation_id,
-        abortController.signal
-      )
-        .then(() => history.push("/dashboard"))
-        .catch((err) => setCurrentError(err));
+      !firstTable
+        ? removeTable(firstTable, abortController.signal).catch((err) =>
+            setCurrentError(err)
+          )
+        : updateTable(
+            firstTable.table_id,
+            seat.reservation_id,
+            abortController.signal
+          )
+            .then(() => history.push("/dashboard"))
+            .catch((err) => setCurrentError(err));
     }
     return () => abortController.abort();
   }
@@ -51,7 +55,7 @@ function SeatForm({
   };
 
   return (
-    <form onSubmit={submitHandler}>
+    <form className="text-center" onSubmit={submitHandler}>
       {Object.keys(seat).length !== 0 ? (
         <div>
           <table
@@ -70,15 +74,7 @@ function SeatForm({
               </tr>
             </thead>
             <tbody>
-              <tr
-                className={
-                  seat.status === "booked"
-                    ? "bg-success"
-                    : seat.status === "seated"
-                    ? "bg-warning"
-                    : "bg-danger"
-                }
-              >
+              <tr className="bg-info">
                 <td className="border">{seat.reservation_id}</td>
                 <td className="border">
                   {seat.first_name} {seat.last_name}
@@ -95,36 +91,42 @@ function SeatForm({
                 </td>
                 <td className="border">{seat.reservation_date}</td>
                 <td className="border">{seat.reservation_time}</td>
-                <td className="border">
-                  {firstTable ? (
-                    <label htmlFor="table_id">
-                      <select
-                        name="table_id"
-                        id="table_id"
-                        onChange={changeHandler}
-                      >
-                        {Object.keys(tables).length !== 0
-                          ? tables.map((tab, index) => {
-                              if (
-                                tab.capacity >= seat.people &&
-                                tab.reservation_id === null
-                              ) {
-                                return (
-                                  <option key={index} value={tab.table_id}>
-                                    {tab.table_name} - {tab.capacity}
-                                  </option>
-                                );
-                              } else {
-                                return null;
-                              }
-                            })
-                          : null}
-                      </select>
-                    </label>
-                  ) : (
-                    "No Tables Listed."
-                  )}
-                </td>
+                {firstTable ? (
+                  <td className="uncolorlabel">
+                    <select
+                      name="table_id"
+                      id="table_id"
+                      onChange={changeHandler}
+                    >
+                      {Object.keys(tables).length !== 0
+                        ? tables.map((tab, index) => {
+                            if (
+                              tab.capacity >= seat.people &&
+                              tab.reservation_id === null
+                            ) {
+                              return (
+                                <option key={index} value={tab.table_id}>
+                                  {tab.table_name} - {tab.capacity}
+                                </option>
+                              );
+                            } else {
+                              return null;
+                            }
+                          })
+                        : null}
+                    </select>
+                  </td>
+                ) : (
+                  <td>
+                    <select
+                      name="table_id"
+                      id="table_id"
+                      onChange={changeHandler}
+                    >
+                      <option key="N/A">No Tables Listed.</option>
+                    </select>
+                  </td>
+                )}
               </tr>
             </tbody>
           </table>
@@ -132,8 +134,14 @@ function SeatForm({
       ) : (
         <h3>No Seating.</h3>
       )}
-      <button type="submit">Submit</button>
-      <button type="button" onClick={() => history.goBack()}>
+      <button className="mr-2 w-25 bg-primary" type="submit">
+        Submit
+      </button>
+      <button
+        className="ml-2 w-25 bg-danger"
+        type="button"
+        onClick={() => history.goBack()}
+      >
         Cancel
       </button>
     </form>
