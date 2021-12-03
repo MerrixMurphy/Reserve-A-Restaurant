@@ -70,7 +70,15 @@ function SeatForm({
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr
+                className={
+                  seat.status === "booked"
+                    ? "bg-success"
+                    : seat.status === "seated"
+                    ? "bg-warning"
+                    : "bg-danger"
+                }
+              >
                 <td className="border">{seat.reservation_id}</td>
                 <td className="border">
                   {seat.first_name} {seat.last_name}

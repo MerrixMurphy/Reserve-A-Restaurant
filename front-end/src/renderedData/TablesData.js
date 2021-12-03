@@ -29,7 +29,9 @@ function TablesData({ setCurrentError, setTables, tables }) {
                 <th className="border">Table Status</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody
+              className={tab.reservation_id ? "table-danger" : "table-success"}
+            >
               <tr>
                 <td className="border">{tab.table_name}</td>
                 <td className="border">{tab.capacity}</td>
@@ -44,7 +46,7 @@ function TablesData({ setCurrentError, setTables, tables }) {
             id={tab.table_id}
             onClick={finish}
             disabled={tab.reservation_id ? false : true}
-            className="w-25"
+            className="w-25 bg-danger"
           >
             Finish
           </button>

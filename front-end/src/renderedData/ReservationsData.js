@@ -29,8 +29,8 @@ function ReservationsData({
   return Object.keys(reservationsList).length !== 0 ? (
     reservationsList.map((res, index) => {
       return (
-        <div key={index}>
-          <table className="table border mt-3 text-center">
+        <div key={index} className="container">
+          <table className="table border mt-3">
             <thead>
               <tr>
                 <th className="border">Reservation ID</th>
@@ -42,7 +42,15 @@ function ReservationsData({
                 <th className="border">Reservation Status</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody
+              className={
+                res.status === "booked"
+                  ? "table-success"
+                  : res.status === "seated"
+                  ? "table-warning"
+                  : "table-danger"
+              }
+            >
               <tr>
                 <td className="border">{res.reservation_id}</td>
                 <td className="border">
@@ -70,7 +78,7 @@ function ReservationsData({
             </tbody>
           </table>
           <button
-            className="w-25 mr-2"
+            className="w-25 mr-2 bg-primary"
             href={`/reservations/${res.reservation_id}/edit`}
             disabled={res.status === "booked" ? false : true}
             onClick={() =>
@@ -81,7 +89,7 @@ function ReservationsData({
           </button>
           {res.status !== "booked" ? null : (
             <button
-              className="w-25 ml-2 mr-2"
+              className="w-25 ml-2 mr-2 bg-success"
               disabled={res.status === "booked" ? false : true}
               href={`/reservations/${res.reservation_id}/seat`}
               onClick={() =>
@@ -93,7 +101,7 @@ function ReservationsData({
           )}
           <button
             id={res.reservation_id}
-            className="w-25 ml-2"
+            className="w-25 ml-2 bg-danger"
             disabled={res.status === "booked" ? false : true}
             data-reservation-id-cancel={res.reservation_id}
             onClick={cancelled}

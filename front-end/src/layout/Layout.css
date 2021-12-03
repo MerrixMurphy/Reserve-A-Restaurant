@@ -1,5 +1,27 @@
 .side-bar {
-  background-color: #393a44;
+  background-color: #241102;
   min-width: 200px;
-  min-height: max-content;
+}
+
+th {
+  background: #241102;
+  color: rgb(255, 255, 255);
+}
+th,
+button {
+  padding: 6px;
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 800px) {
+  tbody,
+  th,
+  td,
+  thead {
+    display: block;
+  }
+
+  thead {
+    float: left;
+  }
 }
