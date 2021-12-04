@@ -1,10 +1,8 @@
 # Periodic Tables Restaurant Reservation System
 
 <p align="center">
-[Periodic Tables]
+<a href="https://warm-waters-56754.herokuapp.com/">Periodic Tables</a>
 </p>
-
-[periodic tables]: https://warm-waters-56754.herokuapp.com/
 
 ### The Project
 
