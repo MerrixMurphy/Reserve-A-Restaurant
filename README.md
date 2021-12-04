@@ -130,5 +130,5 @@ The updateTable(table_id, reservation_id, signal) API takes a table id and reser
 The removeTable(table_id, signal) API takes a table id as its parameter. It then sends a DELETE request to the back-end that deletes the reservation id listed for the table to allow for another reservation to be seated there:
 
 <p align="center">
-<img src="./back-end/api_images/removeTableAPI.png" alt="An image of the create reservation form for this API" width="738">
+<img src="./back-end/api_images/removeTableAPI.png" alt="An image of the create reservation form for this API">
 </p>
