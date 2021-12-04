@@ -1,10 +1,10 @@
 # Periodic Tables Restaurant Reservation System
 
 <p align="center">
-
-[Periodic Tables](https://warm-waters-56754.herokuapp.com/)
-
+[Periodic Tables]
 </p>
+
+[periodic tables]: https://warm-waters-56754.herokuapp.com/
 
 ### The Project
 
@@ -40,9 +40,7 @@ Below is a list of each API currently used with screenshots. Each API takes an a
 The createReservation(newRes, signal) API takes information for a new Reservation as newRes. It then sends a POST request to the back-end to add the reservation to the reservation database. Finally it redirects the user to the dashboard listing the current reservations for the new reservation date:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/createReservationAPI.png)
-
+<img src="./back-end/api_images/createReservationAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### listOne
@@ -50,9 +48,7 @@ The createReservation(newRes, signal) API takes information for a new Reservatio
 The listOne(params, signal) API takes a reservation_id as params then sends a GET request to the back-end to retrieve the specific reservation. This is used mainly for seating a single reservation:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/listOneAPI.png)
-
+<img src="./back-end/api_images/listOneAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### listReservations
@@ -60,9 +56,7 @@ The listOne(params, signal) API takes a reservation_id as params then sends a GE
 The listReservations(params, signal) API takes a date as params then sends a GET request to the back-end to retrieve every reservation on that date organized by time. This is used mainly for the dashboard:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/listReservationsAPI.png)
-
+<img src="./back-end/api_images/listReservationsAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### searchRes
@@ -70,9 +64,7 @@ The listReservations(params, signal) API takes a date as params then sends a GET
 The searchRes(mobile_number, signal) API takes a series of numbers as mobile_number then sends a GET request to the back-end to retrieve every reservation who's mobile phone number includes the numbers used for mobile_number. Those reservations are then organized by date and time. This is mainly used for the search function:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/searchResAPI.png)
-
+<img src="./back-end/api_images/searchResAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### editRes
@@ -80,9 +72,7 @@ The searchRes(mobile_number, signal) API takes a series of numbers as mobile_num
 The editRes(editRes, signal) API takes information for an updated Reservation as editRes. It then sends a PUT request to the back-end in order to update the same reservation with the new data in the database. It then returns the user to the previous page:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/editResAPI.png)
-
+<img src="./back-end/api_images/editResAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### updateRes
@@ -90,9 +80,7 @@ The editRes(editRes, signal) API takes information for an updated Reservation as
 The updateRes(reservation_id, status, signal) API takes a reservation id and a new status as its parameters then it sends a PUT request to the back-end in order to update the reservation matching the id with the new status. These statuses can be updated from booked to cancelled, seated, or after seated, finished:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/updateResAPI.png)
-
+<img src="./back-end/api_images/updateResAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### createTable
@@ -100,9 +88,7 @@ The updateRes(reservation_id, status, signal) API takes a reservation id and a n
 The createTable(newTab, signal) API takes information for a new table as newTab. It then sends a POST request to the back-end to add the table to the database. Finally it redirect the user to the dashboard listing all tables:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/createTableAPI.png)
-
+<img src="./back-end/api_images/createTableAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### listTables
@@ -110,9 +96,7 @@ The createTable(newTab, signal) API takes information for a new table as newTab.
 The listTables(signal) API sends a GET request to the back-end in order to return a complete list of tables in the database organized by name. This is used for the dashboard:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/listTablesAPI.png)
-
+<img src="./back-end/api_images/listTablesAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### updateTable
@@ -120,9 +104,7 @@ The listTables(signal) API sends a GET request to the back-end in order to retur
 The updateTable(table_id, reservation_id, signal) API takes a table id and reservation id as it's parameters. It then sends a PUT request to the back-end to update the table with the reservation id of the reservation seated:
 
 <p align="center">
-<img src="./img/example.png" alt="Size Limit CLI" width="738">
-![An image of the create reservation form for this API.](back-end/api_images/updateTableAPI.png)
-
+<img src="./back-end/api_images/updateTableAPI.png" alt="An image of the create reservation form for this API">
 </p>
 
 ### removeTable
