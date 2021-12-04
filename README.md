@@ -1,15 +1,20 @@
 # Periodic Tables Restaurant Reservation System
 
-<p align="center">
-<a href="https://warm-waters-56754.herokuapp.com/">Periodic Tables</a>
-<br/>
-</p>
-
 ### The Project
 
-This is a Responsive Web Application designed to help restaurants create and manage reservations for customers in order for them to have an organized list of each reservation on a day to day basis. This application can also manage the tables in the restaurant and the seating of reservations associated with them. Finally, the user can also search a phone number in case they need to pull up a reservation quickly or that they can't find.
+[Periodic Tables]("https://warm-waters-56754.herokuapp.com/")
 
-This application uses a mobile first approach combined with the PostgreSQL, Express.js, React, and Node.js (PERN) stack set up as a Monorepo. I used Elephantsql for the database and Heroku for deployment. Heroku uses Amazon Web Services (AWS).
+This is a Responsive Web Application designed for restaurants to create and manage reservations so they have an organized list of each reservation on a day to day basis.
+
+This application can also manage the tables in the restaurant and the seating of reservations associated with them.
+
+Finally, employees can search for a reservations' phone number in case they need to pull up a reservation quickly or they are having trouble finding it.
+
+### The Tech
+
+This application uses a mobile first approach combined with the PostgreSQL, Express.js, React, and Node.js (PERN) stack set up as a Monorepo.
+
+I used Elephantsql for the database and Heroku for deployment. Heroku uses Amazon Web Services (AWS).
 
 ## Database setup
 
@@ -36,80 +41,80 @@ Below is a list of each API currently used with screenshots. Each API takes an a
 
 ### createReservation
 
-The createReservation(newRes, signal) API takes information for a new Reservation as newRes. It then sends a POST request to the back-end to add the reservation to the reservation database. Finally it redirects the user to the dashboard listing the current reservations for the new reservation date:
+The createReservation(newRes, signal) API takes the information listed below as newRes. It then sends a POST request to the back-end to add the new reservation to the reservation database. Finally it redirects the user to the dashboard listing the current reservations for the new reservation date:
 
 <p align="center">
-<img src="./back-end/api_images/createReservationAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/createReservationAPI.png" alt="An image of the create reservation form used for this API">
 </p>
 
 ### listOne
 
-The listOne(params, signal) API takes a reservation_id as params then sends a GET request to the back-end to retrieve the specific reservation. This is used mainly for seating a single reservation:
+The listOne(params, signal) API takes a reservation_id as params then sends a GET request to the back-end to retrieve the specific reservation. This is used for seating a single reservation as shown below:
 
 <p align="center">
-<img src="./back-end/api_images/listOneAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/listOneAPI.png" alt="A single reservation displayed from this API">
 </p>
 
 ### listReservations
 
-The listReservations(params, signal) API takes a date as params then sends a GET request to the back-end to retrieve every reservation on that date organized by time. This is used mainly for the dashboard:
+The listReservations(params, signal) API takes a date as params then sends a GET request to the back-end to retrieve every reservation on that date organized by time. This is used for the dashboard as shown below:
 
 <p align="center">
-<img src="./back-end/api_images/listReservationsAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/listReservationsAPI.png" alt="A list of reservations displayed from this API">
 </p>
 
 ### searchRes
 
-The searchRes(mobile_number, signal) API takes a series of numbers as mobile_number then sends a GET request to the back-end to retrieve every reservation who's mobile phone number includes the numbers used for mobile_number. Those reservations are then organized by date and time. This is mainly used for the search function:
+The searchRes(mobile_number, signal) API takes a series of numbers as mobile_number then sends a GET request to the back-end to retrieve every reservation who's mobile phone number includes the numbers used. Those reservations are then organized by date and time. This is used for the search function as shown below:
 
 <p align="center">
-<img src="./back-end/api_images/searchResAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/searchResAPI.png" alt="An image of the search function and reservations listed using this API">
 </p>
 
 ### editRes
 
-The editRes(editRes, signal) API takes information for an updated Reservation as editRes. It then sends a PUT request to the back-end in order to update the same reservation with the new data in the database. It then returns the user to the previous page:
+The editRes(editRes, signal) API takes the information listed below as editRes. It then sends a PUT request to the back-end in order to update the same reservation with the new data in the database. It then returns the user to the previous page:
 
 <p align="center">
-<img src="./back-end/api_images/editResAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/editResAPI.png" alt="An image of the edit reservation form used for this API">
 </p>
 
 ### updateRes
 
-The updateRes(reservation_id, status, signal) API takes a reservation id and a new status as its parameters then it sends a PUT request to the back-end in order to update the reservation matching the id with the new status. These statuses can be updated from booked to cancelled, seated, or after seated, finished:
+The updateRes(reservation_id, status, signal) API takes a reservation id and a new status as its parameters then it sends a PUT request to the back-end in order to update the reservation matching the id with the new status. These statuses can be updated from booked to cancelled (using the cancel button in the dashboard or search results as shown below), booked to seated (using the submit button in the seatings page as shown below), or from seated to finished (using the finish button in the dashboard as shown below):
 
 <p align="center">
-<img src="./back-end/api_images/updateResAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/updateResAPI.png" alt="An image of a cancel button on the dashboard, a submit button on the seat page, and a finish button in the tables list, all using this API">
 </p>
 
 ### createTable
 
-The createTable(newTab, signal) API takes information for a new table as newTab. It then sends a POST request to the back-end to add the table to the database. Finally it redirect the user to the dashboard listing all tables:
+The createTable(newTab, signal) API takes information listed below as newTab. It then sends a POST request to the back-end to add the table to the database. Finally it redirect the user to the dashboard listing all tables:
 
 <p align="center">
-<img src="./back-end/api_images/createTableAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/createTableAPI.png" alt="An image of the create table form used for this API">
 </p>
 
 ### listTables
 
-The listTables(signal) API sends a GET request to the back-end in order to return a complete list of tables in the database organized by name. This is used for the dashboard:
+The listTables(signal) API sends a GET request to the back-end in order to return a complete list of tables in the database organized by name. This is used for the dashboard as shown below:
 
 <p align="center">
-<img src="./back-end/api_images/listTablesAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/listTablesAPI.png" alt="A list of tables displayed from this API">
 </p>
 
 ### updateTable
 
-The updateTable(table_id, reservation_id, signal) API takes a table id and reservation id as it's parameters. It then sends a PUT request to the back-end to update the table with the reservation id of the reservation seated:
+The updateTable(table_id, reservation_id, signal) API takes a table id and reservation id as it's parameters. It then sends a PUT request to the back-end to update the table with the reservation id of the reservation seated. This can be done by pressing the submit button in the seatings page as shown below:
 
 <p align="center">
-<img src="./back-end/api_images/updateTableAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/updateTableAPI.png" alt="A reservation waiting to be seated showing the submit button that uses this API">
 </p>
 
 ### removeTable
 
-The removeTable(table_id, signal) API takes a table id as its parameter. It then sends a DELETE request to the back-end that deletes the reservation id listed for the table to allow for another reservation to be seated there:
+The removeTable(table_id, signal) API takes a table id as its parameter. It then sends a DELETE request to the back-end that deletes the reservation id listed for the table to allow for another reservation to be seated there. This can be done by pressing the finish button in the dashboard as shown below:
 
 <p align="center">
-<img src="./back-end/api_images/removeTableAPI.png" alt="An image of the create reservation form for this API">
+<img src="./back-end/api_images/removeTableAPI.png" alt="A list of tables showing the finish button that uses this API">
 </p>
