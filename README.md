@@ -2,7 +2,7 @@
 
 ### The Project
 
-[Periodic Tables]("https://warm-waters-56754.herokuapp.com/")
+![Periodic Tables]("https://warm-waters-56754.herokuapp.com/")
 
 This is a Responsive Web Application designed for restaurants to create and manage reservations so they have an organized list of each reservation on a day to day basis.
 
