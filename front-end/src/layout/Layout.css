@@ -2,10 +2,16 @@
   min-width: 200px;
 }
 
+h1,
+h4,
+label,
 th {
-  color: rgb(255, 255, 255);
+  color: white;
 }
 
+h1,
+h4,
+label,
 th,
 .side-bar,
 form,
@@ -16,9 +22,7 @@ form,
 h1,
 h4,
 label {
-  color: white;
   text-align: center;
-  background-color: #241102;
 }
 
 .uncolorlabel {
@@ -26,12 +30,12 @@ label {
 }
 
 .mainbg {
-  background-color: #523f31;
   min-height: 100vh;
   max-height: 100%;
 }
 
-.bgcolor {
+.bgcolor,
+.mainbg {
   background-color: #523f31;
 }
 
@@ -75,17 +79,18 @@ label,
   margin: 0;
 }
 
-.custbutton {
-  border: none;
-  background: none;
-  background-color: white;
-  width: 50%;
-}
-
+.custbutton,
 .smcustbutton {
   border: none;
   background: none;
   background-color: white;
+}
+
+.custbutton {
+  width: 50%;
+}
+
+.smcustbutton {
   width: 33.33%;
 }
 
