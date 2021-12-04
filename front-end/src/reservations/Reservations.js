@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { today } from "../utils/date-time";
+import ErrorAlert from "../layout/ErrorAlert";
 import {
   createReservation,
   listOne,
@@ -23,23 +24,24 @@ function Reservations({ setWhichList, setReservations, selectedDate }) {
     people: "1",
   };
   const [reservation, setReservation] = useState({ ...defaultReservation });
+  const [currentError, setCurrentError] = useState(null);
 
   useEffect(editReservation, [params]);
 
   function listRes() {
     const abortController = new AbortController();
-    listReservations(selectedDate, abortController.signal).then(
-      setReservations
-    );
+    listReservations(selectedDate, abortController.signal)
+      .then(setReservations)
+      .catch((err) => setCurrentError(err));
     return () => abortController.abort();
   }
 
   function editReservation() {
     if (params.reservation_id) {
       const abortController = new AbortController();
-      listOne(params.reservation_id, abortController.signal).then(
-        setReservation
-      );
+      listOne(params.reservation_id, abortController.signal)
+        .then(setReservation)
+        .catch((err) => setCurrentError(err));
       return () => abortController.abort();
     }
   }
@@ -55,14 +57,19 @@ function Reservations({ setWhichList, setReservations, selectedDate }) {
     const abortController = new AbortController();
     reservation.people = Number(reservation.people);
     if (params.reservation_id) {
-      editRes(reservation, abortController.signal).then(() =>
-        history.push(`/dashboard?date=${reservation.reservation_date}`)
-      );
+      editRes(reservation, abortController.signal)
+        .then(() =>
+          history.push(`/dashboard?date=${reservation.reservation_date}`)
+        )
+        .catch((err) => {
+          setCurrentError(err);
+          editReservation();
+        });
       listRes();
     } else {
-      createReservation(reservation, abortController.signal).then(() =>
-        history.goBack()
-      );
+      createReservation(reservation, abortController.signal)
+        .then(() => history.goBack())
+        .catch((err) => setCurrentError(err));
     }
     return () => abortController.abort();
   }
@@ -71,11 +78,7 @@ function Reservations({ setWhichList, setReservations, selectedDate }) {
     event.preventDefault();
     setWhichList("reservations");
     setReservation({ ...defaultReservation });
-    if (!params.reservation_id) {
-      saveReservation();
-    } else {
-      saveReservation();
-    }
+    saveReservation();
   };
 
   return (
@@ -85,6 +88,7 @@ function Reservations({ setWhichList, setReservations, selectedDate }) {
       ) : (
         <h1>Edit Reservation</h1>
       )}
+      <ErrorAlert className="alert alert-danger" error={currentError} />
       <div className="d-flex justify-content-center">
         <form className="col-1 text-center" onSubmit={submitHandler}>
           <div>
