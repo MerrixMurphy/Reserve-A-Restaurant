@@ -1,5 +1,7 @@
 # Periodic Tables Restaurant Reservation System
 
+## Current Status: Completed
+
 ### The Project
 
 [Periodic Tables](https://warm-waters-56754.herokuapp.com/)
