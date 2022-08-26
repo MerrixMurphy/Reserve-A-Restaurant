@@ -10,19 +10,7 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "start:dev": "nodemon src/server.js",
-    "test": "npx cross-env LOG_LEVEL=warn jest --runInBand --detectOpenHandles --forceExit",
-    "test:1": "npm run test -- us-01",
-    "test:2": "npm run test -- us-02",
-    "test:3": "npm run test -- us-03",
-    "test:4": "npm run test -- us-04",
-    "test:5": "npm run test -- us-05",
-    "test:6": "npm run test -- us-06",
-    "test:7": "npm run test -- us-07",
-    "test:8": "npm run test -- us-08",
-    "test:drop-database": "node test/drop-database",
-    "test:start": "npx cross-env LOG_LEVEL=warn NODE_ENV=test npm run test:start:run",
-    "test:start:run": "run-s test:drop-database start "
+    "start:dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -40,8 +28,6 @@
     "pino-pretty": "^4.3.0"
   },
   "devDependencies": {
-    "jest": "^26.6.3",
-    "nodemon": "^2.0.6",
-    "supertest": "^6.1.1"
+    "nodemon": "^2.0.6"
   }
 }
