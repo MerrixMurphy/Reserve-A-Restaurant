@@ -2,6 +2,9 @@
   "name": "starter-restaurant-reservation-front-end",
   "version": "1.0.0",
   "description": "Starter code for restaurant reservation frontend",
+  "engines": {
+    "node": "18.2.0"
+  },
   "main": "src/index.js",
   "repository": {
     "type": "git",
