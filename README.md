@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+
 # Periodic Tables Restaurant Reservation System
 
 ## Current Status: Completed
@@ -121,10 +122,3 @@ The removeTable(table_id, signal) API takes a table id as its parameter. It then
 <p align="center">
 <img src="./back-end/api_images/removeTableAPI.png" alt="A list of tables showing the finish button that uses this API">
 </p>
-=======
-# Capstone: Restaurant Reservation System Backend
-
-This starter code for the backend of the capstone project in the Thinkful curriculum.
-
-See [../README.md](../README.md) for detailed instructions.
->>>>>>> 7807e67b674a0bca68b17ff698b8f3167bfb6851
