@@ -4,7 +4,8 @@
   "description": "Starter code for restaurant reservation frontend",
   "main": "src/index.js",
   "engines": {
-    "node": "16"
+    "node": "16.13.2",
+    "npm": "8.1.2"
   },
   "repository": {
     "type": "git",
