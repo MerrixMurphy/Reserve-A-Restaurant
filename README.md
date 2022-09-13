@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 # Periodic Tables Restaurant Reservation System
 
 ## Current Status: Completed
